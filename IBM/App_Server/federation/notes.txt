@@ -1,0 +1,83 @@
+<#> https://www.ibm.com/docs/en/was/8.5.5?topic=SSEQTP_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/rxml_addnode.htm
+
+(*) We must have Administrator privileges to use the addNode function.
+
+(*) The node agent server is automatically started as part of the addNode command unless we specify the -noagent option
+
+(*) If we recycle the system that hosts an application server node, and did not set up the node agent to act as an operating system daemon, we must issue a startNode command to start the node agent before starting any application servers.
+
+(*) When we run the addNode command, the command stops the running application server that it is incorporating into a cell. we can optionally stop the application server before running the addNode command.
+
+(*) Existing Windows services that are associated with servers before adding a node to a cell are removed when we run the addNode command. If we remove the node from the cell later, Windows services are not automatically created again for the base servers. See information about the WASService command to create a Windows service for the product.
+
+(*) When we add a node, the product might generate ports. The following items apply to port generation:
+
+    (*) Ports generated for the node agent are unique for all the profiles in the installation. For development purposes, we can create multiple profiles on the same installation and add them to one or more cells without concern for port conflicts.
+
+    (*) If we want to specify the ports that the node agent uses, specify the ports in a file with the file name passed with the -portprops option. The format of the file is key=value pairs, one on each line, with the key being the same as the port name in the serverindex.xml file.
+
+    (*) If we want to use a number of sequential ports, consider the -startingport option. This means that port conflicts with other profiles are not detected.
+
+(*) One DMGR profile cannot be federated to another DMGR profile
+
+(*) <run app-server-profile-root>/bin/addNode.sh dmgr_host 
+        [dmgr_port] [-conntype type] [-includeapps] [-includebuses]
+        [-startingport portnumber] [-portprops qualified_filename]
+        [-nodeagentshortname name] [-nodegroupname name] [-registerservice]
+        [-serviceusername name] [-servicepassword password] [-coregroupname name]
+        [-noagent] [-statusport 1231] [-quiet] [-nowait] [-logfile filename]
+        [-replacelog] [-trace] [-username uid] [-password pwd]
+        [-localusername localuid] [-localpassword localpwd] [-profileName profilename]
+        [-excludesecuritydomains true | false] [-asExistingNode] [-help]
+
+
++----------+
+| Examples |
++----------+
+
+    (1) Federate "App_Server_01_Profile" to "Dmgr_01_Profile"
+
+        App_Server_01_Profile:
+            Application server environment to create: Application server
+            Location: /opt/IBM/WebSphere/AppServer/profiles/App_Server_01_Profile
+            Disk space required: 200 MB
+            Profile name: App_Server_01_Profile
+            Make this profile the default: False
+            Node name: app_server_node_01.app_server_cell_01.localhost
+            Host name: localhost
+            Enable administrative security (recommended): True
+            Administrative console port: 9061
+            Administrative console secure port: 9044
+            HTTP transport port: 9080
+            HTTPS transport port: 9443
+            Bootstrap port: 2809
+            SOAP connector port: 8880
+            Run application server as a service: False
+            Create a Web server definition: False
+            Performance tuning setting: Standard
+
+        Dmgr_01_Profile:
+            Application server environment to create: Management
+            Location: /opt/IBM/WebSphere/AppServer/profiles/Dmgr_01_Profile
+            Disk space required: 30 MB
+            Profile name: Dmgr_01_Profile
+            Make this profile the default: True
+            Node name: dmgr_node_01.dmgr_cell_01.localhost
+            Cell name: dmgr_cell_01.localhost
+            Host name: localhost
+            Enable administrative security (recommended): True
+            Administrative console port: 9060
+            Administrative console secure port: 9043
+            Management bootstrap port: 9809
+            Management SOAP connector port:  
+            Run Management as a service: False
+
+
+        ./addNode.sh localhost 8879 \
+            -conntype SOAP \
+            -includeapps \
+            -nodeagentshortname nodeagent_4_app_server_node_01.app_server_cell_01.localhost \
+            -nodegroupname node_group_01 \
+            -coregroupname core_group_01 \
+            -username wasadmin \
+            -password wasadmin

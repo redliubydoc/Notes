@@ -1,0 +1,2 @@
+was_console_secure  :   https://<hostname>:<port>/ibm/console/
+was_console         :   http://<hostname>:<port>/ibm/console/

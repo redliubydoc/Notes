@@ -1,0 +1,71 @@
++------+
+| WASP |
++------+
+
+    installation manager launcher path  :   /opt/IBM/IBMIM/eclipse/IBMIM
+    installation manager uninstall path :   /var/ibm/InstallationManager/uninstall/uninstall
+    
+    start server                        :   /<profile-root>/bin/startManager.sh  
+                                            /<profile-root>/startServer.sh <server-name>  
+                                            /opt/IBM/WebSphere/AppServer/bin/startManager.sh -profileName <profile-name>
+                                            /opt/IBM/WebSphere/AppServer/bin/startServer.sh <server-name> -profileName <profile-name>
+
+    logs                                :   <profile-root>/logs/server_name/startServer.log 
+                                            <profile-root>/logs/server_name/stopServer.log 
+                                            <profile-root>/logs/server_name/SystemOut.log
+                                            <profile-root>/logs/server_name/SystemErr.log
+
+
+    profile information                 :   /<profile-root>/logs/AboutThisProfile.txt
+                                 
+
++--------------------+
+| Profile Management |
++--------------------+
+
+    gui profile management tool :   /opt/IBM/WebSphere/AppServer/bin/ProfileManagement/pmt.sh
+    cli profile management tool :   /opt/IBM/WebSphere/AppServer/bin/manageprofiles.sh
+    log                         :   /opt/IBM/WebSphere/AppServer/logs/manageprofiles/profile_name_create.log       
+
+    profileTemplates path       :   /opt/IBM/WebSphere/AppServer/profileTemplates   
+    
+    profileTemplates types      :   cell
+                                    default (app server)
+                                    dmgr (deprecated)
+                                    managed (custom)
+                                    management (administration, deployment manager, )
+                                    secureproxy
+   
+
+    syntax: manageprofiles.sh -node -<argument> <argument parameter> ...
+
+
+    +----------+
+    | Examples |
+    +----------+
+
+        (1) create application server profile
+
+            ./manageprofiles.sh -create \
+                -templatePath /opt/IBM/WebSphere/AppServer/profileTemplates/default/ \
+                -profileName App_Server_01_Profile \
+                -profilePath /opt/IBM/WebSphere/AppServer/profiles/App_Server_01_Profile/ \
+                -hostName localhost \
+                -cellName app_server_cell_01.localhost \
+                -nodeName app_server_node_01.app_server_cell_01.localhost \
+                -serverName server_01 \
+                -enableAdminSecurity true \
+                -adminUserName wasadmin \
+                -adminPassword wasadmin
+
+        (2) delete profile
+
+            ./manageprofiles.sh -delete -profileName App_Server_01_Profile
+
+
++----------------+
+| Important Urls |
++----------------+
+
+    was_console_secure: https://<hostname>:<port>/ibm/console/
+    was_console: http://<hostname>:<port>/ibm/console/

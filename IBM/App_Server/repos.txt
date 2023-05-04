@@ -1,0 +1,5 @@
+(#) https://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/cins_repositories.html
+(#) https://www.ibm.com/docs/en/was/8.5.5?topic=installing-online-product-repositories-websphere-application-server-offerings
+
+websphere network deployment:           https://www.ibm.com/software/repositorymanager/com.ibm.websphere.ND.v85
+websphere network deployment trial:     https://www.ibm.com/software/repositorymanager/com.ibm.websphere.NDTRIAL.v85
