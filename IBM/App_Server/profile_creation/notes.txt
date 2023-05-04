@@ -62,10 +62,3 @@
 
             ./manageprofiles.sh -delete -profileName App_Server_01_Profile
 
-
-+----------------+
-| Important Urls |
-+----------------+
-
-    was_console_secure: https://<hostname>:<port>/ibm/console/
-    was_console: http://<hostname>:<port>/ibm/console/

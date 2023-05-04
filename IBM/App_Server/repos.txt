@@ -1,5 +1,7 @@
-(#) https://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/cins_repositories.html
-(#) https://www.ibm.com/docs/en/was/8.5.5?topic=installing-online-product-repositories-websphere-application-server-offerings
+<#> https://www.ibm.com/docs/en/was/8.5.5?topic=installing-online-product-repositories-websphere-application-server-offerings
 
-websphere network deployment:           https://www.ibm.com/software/repositorymanager/com.ibm.websphere.ND.v85
-websphere network deployment trial:     https://www.ibm.com/software/repositorymanager/com.ibm.websphere.NDTRIAL.v85
+websphere network deployment        :   https://www.ibm.com/software/repositorymanager/com.ibm.websphere.ND.v85
+websphere network deployment trial  :   https://www.ibm.com/software/repositorymanager/com.ibm.websphere.NDTRIAL.v85
+ibm http server (ILAN)              :   https://www.ibm.com/software/repositorymanager/com.ibm.websphere.IHSILAN.v85
+websphere plug-ins for (ILAN)       :   https://www.ibm.com/software/repositorymanager/com.ibm.websphere.PLGILAN.v85
+customization toolbox (ILAN)        :   https://www.ibm.com/software/repositorymanager/com.ibm.websphere.WCTILAN.v85

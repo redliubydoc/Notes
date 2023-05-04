@@ -1,1 +1,1 @@
-In distributed server configurations, each node has a node agent that works with the deployment manager to manage administration processes.
+(*) In distributed server configurations, each node has a node agent that works with the deployment manager to manage administration processes.
