@@ -1,0 +1,28 @@
++---------+
+| Regions |
++---------+
+
+    -> A Region is a physical location in the world and is independent of each other.
+    -> Regions are connected via a high bandwidth, fully redundant network, that's the aws global network backbone.
+
++-------------------------+
+| Availability Zones (AZ) |
++-------------------------+
+
+    -> Each Region consists of two more AZs
+    -> AZs can be considered as a cluster of datacenters
+    -> Each AZ is designed as a independent failure zone, they are physically separated and are inter-connected with high speed private links
+    -> They have redundant network and power sources
+    -> Each AZs are located at lower-risk locations
+
++----------+
+| Outposts |
++----------+
+
++-------------+
+| Local Zones |
++-------------+
+
++-----------------+
+| Wavelength Zone |
++-----------------+
