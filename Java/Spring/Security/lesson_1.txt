@@ -1,0 +1,34 @@
+-> Spring Security 
+    -> Authentication (who you are)
+        -> Types 
+            -> HTTP Basic (By default)
+            -> OAuth2
+            -> Certificate, etc.
+
+    -> Authorization (what you can do)
+        -> authority => action, eg : read, write etc.
+        -> role => eg: admin, manager etc.
+
+WebSecurityConfig
+
+    Beans
+        => UserDetailsService
+        => PasswordEncoder
+
+
++-----------------------+     +------------------------+     +-------------------------+
+| Authentication Filter | ->  | Authentication Manager | ->  | Authentication Provider |
++-----------------------+     +------------------------+     +-------------------------+
+                                                                |                   |
+                                                                |                   |
+                                                                V                   V
+                                            +----------------------+            +------------------+
+                                            | User Details Service |            | Password Encoder |
+                                            +----------------------+            +------------------+
+                                            
+                                            
+
+
+
+-> We have only one authentication manager
+-> We have many authentication provider

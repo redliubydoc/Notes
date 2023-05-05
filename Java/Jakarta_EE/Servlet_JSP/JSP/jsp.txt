@@ -1,0 +1,23 @@
+
+
+
+-> JSP pages run on a JSP container. A servlet container is normally also a JSP container. Tomcat, for instance, is a servlet/JSP container.
+
+Important Tags
+
+-> Declaration Tag
+
+    <%! 
+        variables;
+        methods;
+    %>
+
+-> Scriptlet Tag
+
+    <% 
+        equivalent to service method
+    %>
+
+-> Expression Tag
+
+    <%= %>

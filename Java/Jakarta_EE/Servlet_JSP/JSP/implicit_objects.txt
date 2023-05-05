@@ -1,0 +1,13 @@
++---------------+----------------------------------------+
+| Object        | Type                                   |
++---------------+----------------------------------------+
+| request       | javax.servlet.http.HttpServletRequest  |  
+| response      | javax.servlet.http.HttpServletResponse | 
+| out           | javax.servlet.jsp.JspWriter            |  
+| page          | javax.servlet.jsp.HttpJspPage          |
+| pageContext   | javax.servlet.jsp.PageContext          |
+| session       | javax.servlet.http.HttpSession         |
+| application   | javax.servlet.ServletContext           |
+| config        | javax.servlet.ServletConfig            |
+| exception     | java.lang.Throwable                    |
++---------------+----------------------------------------+

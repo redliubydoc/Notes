@@ -1,0 +1,2 @@
+<%-- jsp comment, not sent to the browser and cannot be nested --%>
+<!-- html comment -->

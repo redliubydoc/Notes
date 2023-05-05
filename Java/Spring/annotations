@@ -1,0 +1,6 @@
+@Configuration
+
+
+@Bean: 
+
+    (1) used above method => Specifies that it returns a bean to be managed by Spring context

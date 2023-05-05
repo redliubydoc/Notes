@@ -61,4 +61,3 @@
         (2) delete profile
 
             ./manageprofiles.sh -delete -profileName App_Server_01_Profile
-

@@ -1,0 +1,94 @@
+-> Spring Security 
+    -> Authentication (who you are)
+        -> Types 
+            -> HTTP Basic (By default)
+            -> OAuth2
+            -> Certificate, etc.
+
+    -> Authorization (what you can do)
+        -> authority => action, eg : read, write etc.
+        -> role => eg: admin, manager etc.
+
+WebSecurityConfig
+
+    Beans
+        => UserDetailsService
+        => PasswordEncoder
+
+
+HTTP Request
+    |
+    V
++-----------------------+    +------------------------+    +-------------------------+
+| Authentication Filter | -> | Authentication Manager | -> | Authentication Provider |
++-----------------------+    +------------------------+    +-------------------------+
+                                                               |                   |
+                                                               |                   |
+                                                               |                   |
+                                                               |                   |
+                                                               V                   V
+                                           +----------------------+            +------------------+
+                                           | User Details Service |            | Password Encoder |
+                                           +----------------------+            +------------------+
+                                            
+                                            
+
+Logic in Authentication Filter Chain
+
+		-> Create an unauthenticated authentication token (implements Authentication interface)
+		-> Delegate the authentication token to the AuthenticationManager which in turn returns the authentication token by adding some more info to it
+		-> If the authentication token is authenticated then send the request to the next filter in the chain
+
+-> We have only one authentication manager
+-> We have many authentication provider
+
+
+id username password
+
+
+UsernamePasswordAuthenticationToken 
+    Principal = com.raj.security.model.CustomUserDetails@1b2e5ae7
+    Credentials = [ PROTECTED ]
+    Authenticated = true
+    Details=WebAuthenticationDetails [ RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=null ]
+    Granted Authorities = [
+        CustomGrantedAuthority(authority=read), 
+        CustomGrantedAuthority(authority=write), 
+        CustomGrantedAuthority(authority=delete)
+    ]
+
+
+AnonymousAuthenticationToken 
+    Principal = anonymousUser 
+    Credentials = [ PROTECTED ] 
+    Authenticated = true
+    Details=WebAuthenticationDetails [ RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=5934843EB150C1EB0141847F939CADD7 ]
+    Granted Authorities = [
+        ROLE_ANONYMOUS
+    ]
+
+
+-> Unsuccessful authentication in Spring Security returns => 401 Unauthorized
+-> Unsuccessful authorization in Spring Security returns => 403 Forbidden
+
+matcher + method
+// which matcher method should you use and how
+    anyRequest(), mvcMatchers(), antMatchers(), regexMatchers()
+// how to apply differnt authorization rules
+
+.authorizeHttpRequests().anyRequest().authenticated() => Any request which is authenticated
+.authorizeHttpRequests().anyRequest().permitAll() => With or without successfull authentication but an unsuccessful authenticated will not work
+.authorizeHttpRequests().anyRequest().permitAll()
+
+
+learn SpEL  
+
+
+role = ADMIN <=> authority = ROLE_ADMIN
+
+
+=> Observation: If authentication token in security context holder is not [authenticated = true] 
+    then authorization filter gives 403 Forbidden error if 
+        anyRequest().authenticated()
+        anyRequest().hasAuthorities()
+        but passes permitAll()

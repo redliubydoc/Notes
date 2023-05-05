@@ -1,0 +1,156 @@
+-> web.xml file contains the deployment descriptor
+
+(#) https://cloud.google.com/appengine/docs/flexible/java/configuring-the-web-xml-deployment-descriptor
+
+
+-> Servlets runs on Servlet / JSP Container
+
+-> A servlet / JSP container is a special web server that can process servlets as well as serve static contents
+
+-> In the past, people were more comfortable running a servlet/JSP container as a module of an HTTP server such as the Apache HTTP Server because an HTTP server was considered more robust than a servlet/JSP container. In this scenario the servlet/JSP container would be tasked with generating dynamic contents and the HTTP server with serving static resources. Today servlet/JSP containers are considered mature and widely deployed without an HTTP server
+
+-> Apache Tomcat and Jetty are the most popular servlet/JSP containers and are free and open-sourc
+
+
+#####################################################################################
+
+Servlet and JSP are two of a multitude of technologies defined in the
+Java Enterprise Edition (EE). Other Java EE technologies include Java
+Message Service (JMS), Enterprise JavaBeans (EJB), JavaServer Faces
+(JSF), and Java Persistence. The complete list of technologies in the Java
+EE version 6 (the current version) can be found here.
+http://www.oracle.com/technetwork/java/javaee/tech/index.html
+To run a Java EE application, you need a Java EE container, such as
+GlassFish, JBoss, Oracle WebLogic, and IBM WebSphere. You can deploy
+a servlet/JSP application in a Java EE container, but a servlet/JSP container
+is sufficient and is more lightweight than a Java EE container. Tomcat and
+Jetty are not Java EE containers, so they cannot run EJB or JMS
+
++---------------------------+
+| Servlet Lifecycle Methods |
++---------------------------+
+
+    init, service, and destroy are lifecycle methods. The servlet container
+    invokes these three methods according to these rules.
+
+
+    -> void init(ServletConfig config) throws ServletException: 
+
+        The servlet container invokes this method the first time the servlet is requested. This method is not called at subsequent requests. You use this method to write initialization code. When invoking this method, the servlet container passes a ServletConfig. Normally, you will assign the ServletConfig to a class level variable so that this object can be used from other points in the servlet class.
+
+    -> void service(ServletRequest request, ServletResponse response) throws ServletException, java.io.IOException: 
+
+        The servlet container invokes this method each time the servlet is requested. You write the code that the servlet is supposed to do here. The first time the servlet is requested, the servlet container calls the init method and the service method. For subsequent requests, only service is invoked.
+
+    -> void destroy():
+
+        The servlet container invokes this method when the servlet is about to be destroyed. This occurs when the application is unloaded or when the servlet container is being shut down. Normally, you write clean-up code in this method.
+
++-------------------------+
+| Servlet Mapping Example |
++-------------------------+
+
+    <servlet>
+        <servlet-name>watermelon</servlet-name>
+        <servlet-class>myservlets.watermelon</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>garden</servlet-name>
+        <servlet-class>myservlets.garden</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>list</servlet-name>
+        <servlet-class>myservlets.list</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>kiwi</servlet-name>
+        <servlet-class>myservlets.kiwi</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>watermelon</servlet-name>
+        <url-pattern>/fruit/summer/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>garden</servlet-name>
+        <url-pattern>/seeds/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>list</servlet-name>
+        <url-pattern>/seedlist</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>kiwi</servlet-name>
+        <url-pattern>*.abc</url-pattern>
+    </servlet-mapping>
+
+
+-> Any resource you put under the application directory is directly accessible to the user by typing the url to the resource. If you want to include a resource that can be accessed by a servlet but not accessible to the user, put it under WEB-INF.
+
++----------------+
+| ServletRequest |
++----------------+
+
+    -> For every HTTP request, the servlet container creates an instance of ServletRequest and passes it to the servlet’s service().
+
+    -> public String getParameter(String name):
+        getParameter is the most frequently used method in ServletRequest. A common use of this method is to return the value of an HTML form field
+
+    -> getParameter can also be used to get the value of a query string. For example, if a servlet is invoked using this http://domain/context/servletName?id=123, you can retrieve the value of id from inside your servlet using String id = request.getParameter("id");
+
+    -> In addition to getParameter, you can also use getParameterNames, getParameterMap, and getParameterValues to retrieve form field names and values as well as query string
+
+
++-----------------+
+| ServletResponse |
++-----------------+
+
+    -> Prior to invoking a servlet’s service method, the servlet container creates a ServletResponse and pass it as the second argument to the service method. The ServletResponse abstracts the complexity of sending response to the browser.
+
+    -> One of the methods defined in ServletResponse is the getWriter method, which returns a java.io.PrintWriter that can send text to the client. By default, the PrintWriter object uses ISO-8859-1 encoding. When sending response to the client, most of the time you send it as HTML. You are therefore assumed to be familiar with HTML.
+
+    -> There is also another method that you can use to send output to the browser: getOutputStream. However, this method is for sending binary data.
+
+
++---------------+
+| ServletConfig |
++---------------+
+
+    -> The servlet container passes an implementation of ServletConfig to the Servlet’s init method when the servlet container initializes the servlet.
+
+    -> ServletConfig is an interface having the following 4 methods
+
+        1) public String getServletName():
+
+            -> Returns the name of this servlet instance.
+            -> The name may be provided via server administration, assigned in the web application deployment descriptor, or for an unregistered servlet instance it will be the servlet's class name.
+
+        2) public ServletContext getServletContext():
+
+            -> The ServletContext represents the servlet application. There is only one context per web application
+
+            -> For distributed application where an application is deployed in multiple containers there is one ServletContext per JVM.
+
+            -> The ServletContext is there so that you can share information that can be accessed from all resources in the application and to enable dynamic registration of web objects. The former is done by storing objects in an internal Map within the ServletContext. Objects stored in ServletContext are called attributes.
+
+                -> The following methods in ServletContext deal with attributes:
+
+                    java.lang.Object getAttribute(java.lang.String name)
+                    java.util.Enumeration<java.lang.String> getAttributeNames()
+                    void setAttribute(java.lang.String name, java.lang.Object object)
+                    void removeAttribute(java.lang.String name)
+
+        3) public String getInitParameter(String name):
+
+            -> The ServletConfig encapsulates configuration information that you can pass to a servlet through @WebServlet or the deployment descriptor. Every piece of information so passed is called an initial parameter. An initial parameter has two components: key and value.
+
+            -> To retrieve the value of an initial parameter from inside a servlet, call the getInitParameter method on the ServletConfig passed by the servlet container to the servlet’s init method.
+
+        4) public Enumeration<String> getInitParameterNames();
+

@@ -1,0 +1,45 @@
+1 -> Generating a stream from an ordered collection preserves the ordering
+2 -> Stream can be traversed only once
+
+
++-------------------+
+| Stream Operations |
++-------------------+
+
+    +-------------------------+
+    | Intermediate Operations |
+    +-------------------------+
+
+        -> Return another stream
+
+        -> Lazy: Intermediate operations don’t perform any processing until a terminal operation is invoked on the stream pipeline.
+        
+        -> List of all stream intermediate operations:
+
+            -> filter()
+            -> map()
+            -> flatMap()
+            -> distinct()
+            -> sorted()
+            -> peek()
+            -> limit()
+            -> skip()
+
+
+    +---------------------+
+    | Terminal Operations |
+    +---------------------+
+
+        -> Terminal operations produce a result from a stream pipeline. A result is any non-stream value such as a List, an Integer, or even 
+        
+        -> List of all stream terminal operations:
+
+            -> forEach()
+            -> allMatch()
+            -> anyMatch()
+            -> noneMatch()
+            -> collect()
+            -> count()
+            -> min()
+            -> max()
+            -> reduce()
