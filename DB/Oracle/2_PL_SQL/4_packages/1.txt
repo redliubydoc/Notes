@@ -1,0 +1,164 @@
+** Typically, a package has a SPECIFICATION and a BODY
+    -> SPECIFICATION is mandatory
+    -> BODY can be required or optional, depending on the package specification
+
+** Both the package body and package specification must be in the same schema
+
+* The package specification declares the public objects that are accessible from outside the package
+
+* If a package specification whose public objects include cursors and subprograms, then it must have a body which defines queries for the cursors and code for the subprograms
+
+* A package body contains the implementation of the cursors or subprograms declared in the package specification. In the package body, WE can declare or define private variables, cursors, etc., used only by package body itself.
+
+* A package body can have an initialization part whose statements initialize variables or perform other one-time setups for the whole package
+
+* A package body can also have an exception-handling part used to handle exceptions
+
+** To load package from source file:
+    @path_to_file
+** To refer to an item of a package we use the following syntax
+    <package_name>.<item_name>
+
+**  Each session has its own instance of the package
+
++---------------+
+| Specification |
++---------------+
+
+    * Specification contains public items
+    * By default, the scope of package items is the schema of the package
+    * A package specification does not contain any implementations of the public items
+    * A package specification can exist independently if their items do not require implementations
+
+    +--------------------------------------------+
+    | Specification contains the following items |
+    +--------------------------------------------+
+
+        -> Procedures
+        -> Functions
+        -> Cursors
+        -> Types, variables, and constants
+        -> Records
+        -> Collections
+
+    +--------+
+    | Syntax |
+    +--------+
+
+        create [or replace] package [schema_name.]<package_name>
+        is | as
+            declarations
+        end [<package_name>];
+
+        -> The [or replace] option allows us to replace the package if it exists and recompile it
+
+        -> Between the  AS and END keywords, you declare the public items of the package specification
+
+        Example 1:
+            create package order_mgmt as
+                gc_shipped_status  constant varchar2(10) := 'Shipped';
+                gc_pending_status constant varchar2(10) := 'Pending';
+                gc_canceled_status constant varchar2(10) := 'Canceled';
+
+                cursor g_cur_order (
+                    p_order_id number
+                ) is
+                    select
+                        customer_id,
+                        status,
+                        salesman_id,
+                        order_date,
+                        item_id,
+                        product_name,
+                        quantity,
+                        unit_price
+                    from
+                        order_items
+                    inner join orders using (order_id)
+                    inner join products using (product_id)
+                    where
+                        order_id = p_order_id;
+
+                function get_net_value ( 
+                    p_order_id number
+                ) return number;
+
+                function get_net_value_by_customer ( 
+                    p_customer_id number,
+                    p_year number
+                ) return number;
+            end order_mgmt;
+
++------+
+| Body |
++------+
+
+    * Besides the implementation of the cursors and subprograms in the package specification, a package body may have private items that are accessible only within itself
+
+    * A package body can have an initialization part which consists of statements that initialize public variables and do other one-time setup tasks
+
+    * The initialization part only runs once at the first time the package is referenced. It can also include an exception handler
+
+
+    +--------+
+    | Syntax |
+    +--------+
+
+        create [or replace] package body [<schema_name>].<package_name> is | as
+            declarations
+            implementations;
+        begin
+        [exception]
+        end [<package_name>];
+
+        * Between the AS and END keywords are the declarations of private items and the implementations of the public items declared in the package specification
+
+        Example 1:
+            create package body order_mgmt as
+                function get_net_value (
+                    p_order_id number
+                ) return number is
+                    ln_net_value number 
+                begin
+                    select
+                        sum(unit_price * quantity)
+                    into
+                        ln_net_value
+                    from
+                        order_items
+                    where
+                        order_id = p_order_id;
+
+                    return p_order_id;
+                exception
+                    when no_data_found then
+                        dbms_output.put_line(SQLERRM );
+                end get_net_value;
+
+           
+                function get_net_value_by_customer(
+                        p_customer_id number,
+                        p_year number
+                ) return number is
+                    ln_net_value NUMBER 
+                begin
+                    select sum(quantity * unit_price) into ln_net_value
+                    from order_items
+                    inner join orders using (order_id)
+                    where extract(YEAR FROM order_date) = p_year and customer_id = p_customer_id and status = gc_shipped_status;
+                    return ln_net_value;
+                exception
+                    when no_data_found then
+                        dbms_output.put_line(SQLERRM );
+                end get_net_value_by_customer;
+            end order_mgmt;
+
+
++--------------+
+| Drop Package |
++--------------+
+        drop package [body] [<schema_name>].<package_name>;
+
+        * If we want to drop only the body of the package, we need to specify the BODY keyword. If we omit the BODY keyword, then the statement drops both the body and specification of the package
+
+        * Oracle does not invalidate dependent objects when we drop only the body of a package but not the package specification. However, we will not be able to call one of the procedures or function declared in the package specification till you recreate the package body

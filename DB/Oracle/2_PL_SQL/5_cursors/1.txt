@@ -1,0 +1,226 @@
+** Basically A cursor is a pointer that points to a result of a query
+
+* Cursors are used to store multiple rows temporarily in memory
+
+* A cursor is a pointer to the private memory area which is allocated by oracle server when an SQL statement is executed
+
+* Cursors can hold multiple row but can process only one row at a time
+
+* The total no. of rows that a cursor can hold is called active set
+
++-------+
+| Types |
++-------+
+
+    -> Implicit cursor
+    -> Explicit cursor
+
+    +-----------------+
+    | Implicit cursor |
+    +-----------------+
+
+        * Whenever Oracle executes an SQL statement such as SELECT INTO, INSERT, UPDATE, and DELETE, it automatically creates an implicit cursor
+
+        * Oracle internally manages the whole execution cycle of implicit cursors and reveals only the cursor’s information and statuses such as 
+            -> SQL%ROWCOUNT 
+            -> SQL%ISOPEN
+            -> SQL%FOUND
+            -> SQL%NOTFOUND
+
+    +-----------------+
+    | Explicit cursor |
+    +-----------------+
+
+        * An explicit cursor is an SELECT statement declared explicitly in the declaration section of the current block or a package specification
+        * For an explicit cursor, we have control over its execution cycle from OPEN, FETCH, and CLOSE.
+        * We can pass parameters to a parameterized cursor while opening it
+
+        +-----------------+
+        | Execution Cycle |
+        +-----------------+
+
+            Declare:
+
+                * Declared in the declaration section of a block or package 
+
+                Syntax:
+                    -> cursor <cursor_name> is <query>;
+                    -> cursor <cursor_name> (<parameter_list>);
+
+            Open:
+
+                * Oracle parses the query, binds variables, and executes the associated SQL statement
+
+                * Oracle also determines an execution plan, associates host variables and cursor parameters with the placeholders in the SQL statement, determines the result set, and sets the cursor to the first row in the result set
+
+                Syntax:
+                    -> open <cursor_name>;
+                    -> open <cursor_name> (<value_list>);
+
+            Fetch (Iterative):
+                
+                * The FETCH statement places the contents of the current row into variables
+
+                Syntax:
+                    fetch <cursor_name> into <variable_list>;
+
+            close:
+
+                * Closing a cursor instructs Oracle to release allocated memory at an appropriate time
+
+                * If we declare a cursor in an anonymous block, procedure, or function, the cursor will automatically be closed when the execution of these objects end
+
+                * However, we must explicitly close package-based cursors
+                
+                * Note that if you close a cursor that has not opened yet, Oracle will raise an INVALID_CURSOR exception
+
+                Syntax:
+                    close <cursor_name>;
+
+        +----------------------------+
+        | Explicit Cursor Attributes |
+        +----------------------------+
+
+            Syntax:
+                <cursor_name>%<attribute_name> -- cursor_name = sql for implicit cursor
+
+                1-> %ISOPEN (TRUE / FALSE)
+
+                2-> %FOUND
+                        NULL before the first fetch
+                        TRUE if a record was fetched successfully
+                        FALSE if no row returned
+                        INVALID_CURSOR if the cursor is not opened
+
+                3-> %NOTFOUND (Opposite of %FOUND)
+
+                4-> %ROWCOUNT
+                    * It returns the number of rows fetched so far
+                    * If the cursor is not opened, this attribute returns INVALID_CURSOR
+                    * When a cursor is opened, %ROWCOUNT is 0
+
++----------+
+| Examples |
++----------+
+    
+    Example: While Loop
+
+    --------------------------------------------------------
+
+        DECLARE
+            CURSOR c_emp_cursor IS
+                SELECT emp_id, last_name
+                FROM employees
+                WHERE department_id = 30;
+
+            v_empid employees.emp_id%TYPE;
+            v_lname employees.last_name%TYPE;
+
+        BEGIN
+            OPEN c_emp_cursor;
+            LOOP
+                FETCH c_emp_cursor INTO v_empid, v_lname;
+                
+                EXIT WHEN c_emp_cursor%NOTFOUND; 
+                
+                dbms_output.put_line(v_empid || ' ' || v_lname);
+            END_LOOP;                      
+            CLOSE c_emp_cursor;
+        END;
+        /
+
+    --------------------------------------------------------
+
+    Example: For Loop
+
+    --------------------------------------------------------
+
+        /*
+            [DECLARE], OPEN, FETCH, EXIT and CLOSE are implicitely done by FOR loop 
+        */
+        DECLARE
+            CURSOR emp_cur IS 
+                SELECT * FROM employees
+                WHERE salary > 10000;
+        BEGIN
+            FOR emp_rec IN emp_cur
+            LOOP
+                dbms_output.put_line('Name: ' || emp_rec.name);
+                dbms_output.put_line('Address: ' || emp_rec.address);
+            END LOOP;
+        END;
+        /
+
+    --------------------------------------------------------
+
+        begin
+            for r_product in (
+                    select product_name, list_price 
+                    from products
+                    order by list_price DESC)
+            loop
+                dbms_output.put_line(r_product.product_name || ': $' || r_product.list_price );
+            end loop;
+        end;
+
+    --------------------------------------------------------
+
+    Example: Parameterized While Loop
+
+        declare
+            r_product products%rowtype;
+            cursor c_product (
+                low_price number [ := <default_value>], 
+                high_price number [ := <default_value]
+            )
+            is
+                select * from products
+                where list_price between low_price AND high_price;
+        begin
+            -- show mass products
+            dbms_output.put_line('Mass products: ');
+            open c_product(50, 100);
+            loop
+                fetch c_product into r_product;
+                exit when c_product%notfound;
+                dbms_output.put_line(r_product.product_name || ': ' ||r_product.list_price);
+            end loop;
+            close c_product;
+
+            -- show luxury products
+            dbms_output.put_line('Luxury products: ');
+            open c_product(800,1000);
+            loop
+                fetch c_product into r_product;
+                exit when c_product%notfound;
+                dbms_output.put_line(r_product.product_name || ': ' ||r_product.list_price);
+            end loop;
+            close c_product;
+        end;
+        /
+
+    --------------------------------------------------------
+    Example: Parameterized For Loop
+
+        declare
+            cursor cursorValue (
+                p_product_id number)
+            ) is
+                select h.product_description, o.company_short_name
+                from company o, product h
+                where o.product_id =h.product_id and h.product_id =p_product_id
+                order by 2;
+
+            v_company_rec cursorValue%rowtype;
+        begin
+            for idx in cursorValue(1) loop
+                dbms_output.put_line(rpad(idx.product_description,20,' ')||' '|| rpad(idx.company_short_name,30,' '));
+            end loop;
+
+            for idx in cursorValue(2) loop
+                dbms_output.put_line(rpad(idx.product_description,20,' ')||' '|| rpad(idx.company_short_name,30,' '));
+            end;
+        end;
+        /
+
+

@@ -1,0 +1,33 @@
+
+if <condition-1> 
+then
+    <statements-1>
+elsif <condition-2> 
+then
+    <statements-2>
+else 
+    <else-statement>
+end if;
+
++----------+
+| Examples |
++----------+
+
+    (1) 
+
+        set serveroutput on;
+
+        declare
+            v_number number not null := -1; 
+        begin
+            if v_number < 0
+            then
+                dbms_output.put_line('the number is negative');
+            elsif v_number > 0
+            then
+                dbms_output.put_line('the number is positive');
+            else 
+                dbms_output.put_line('the number is zero');
+            end if;
+        end;
+        /

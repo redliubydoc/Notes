@@ -1,0 +1,101 @@
+What is Normalization?
+    Normalization is a database design technique that reduces data redundancy and eliminates undesirable characteristics like Insertion, Update and Deletion Anomalies.
+    Normalization rules divides larger tables into smaller tables and links them using relationships.
+
+There are basically 4 popular normal forms
+    -> 1st NF
+    -> 2nd NF
+    -> 3rd NF
+    -> BCNF
+
++-----------------------+
+| Functional Dependency |
++-----------------------+
+
+    Functional dependencies establish the relation of one attribute to another attribute within a database. The use of a unique key field is one of the primary ways in which functional dependencies are practiced within databases.
+
+    SSNs are unique identifiers for individuals in the United States and are used as a key to identify people who may otherwise be easily confused inside a database. You could say (SSN → birth date) because every unique SSN has a functionally dependent birth date associated with it.
+
+    However, the opposite (birth date → SSN) is not true because there are many people with the same birth date but only one person exists per each unique SSN.
+
++-----------------+
+| 1st Normal Form |
++-----------------+
+    
+    -> No composite attributes
+    -> No multi-valued attributes
+
++-----------------+
+| 2nd Normal Form |
++-----------------+
+
+    -> In 1st NF
+    -> Every non-primary-key attribute is fully functionally dependent on the primary key, then the relation is in Second Normal Form (2NF)
+
++-----------------+
+| 3rd Normal Form |
++-----------------+
+
+    -> In 2nd NF
+    -> No transitive dependencies
+
++----------------+
+| BC Normal Form |
++----------------+
+
+    -> In 3rd NF
+    -> For  any A -> B, A should be a super key, in simple A cannot be non prime-attribute if B is prime-attribute
+
+
+(#) Example: 1NF & 2NF
+
+    (No NF) key => Id
+    Id  Name        Cart
+    -------------------------------------
+    1   John Doe    book_1, book_2, book_3
+
+    (1st NF) key => Id, Cart
+    Id  First_Name  Last_Name   Cart
+    --------------------------------------------------
+    1   John        Doe         book_1
+    1   John        Doe         book_2 
+    1   John        Doe         book_3
+
+    (2st NF) key => Id, Cart
+    Id  First_Name  Last_Name
+    -------------------------
+    1   John        Doe      
+    
+    (2st NF) key => Reader_ID, Book
+    Reader_ID   Book
+    ----------------------------------
+    1           book_1
+    1           book_2 
+    1           book_3
+
+(#) Example: BCNF
+
+    Student_ID  Subject Professor_ID
+    --------------------------------
+    101         Java    201
+    101         C++     203
+    102         Java    202
+    103         C#      204
+    104         Java    201    
+
+
+    Student_ID  Professor_ID
+    ------------------------
+    101         201
+    101         203
+    102         202
+    103         204
+    104         201    
+
+    Professor_ID    Subject 
+    -----------------------
+    201             Java    
+    202             Java   
+    203             C++    
+    204             C#     
+    

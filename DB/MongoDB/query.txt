@@ -1,0 +1,91 @@
++-----+
+| And |
++-----+
+
+    { 
+        $and: [
+            {
+                "name": "John"
+            }, 
+            {
+                "id": "2"
+            }
+        ]
+    }
+
++----+
+| Or |
++----+
+
+    { 
+        $or: [
+            {
+                "name": "John"
+            }, 
+            {
+                "id": "2"
+            }
+        ]
+    }
+
++----+
+| In |
++----+
+
+    { 
+        "name": {
+            $in: [
+                "John", 
+                "Peter"
+            ]
+        }
+    }
+
++--------+
+| Update |
++--------+
+
+    db.practiceCollection.update(
+        {
+            "name": "John"
+        },
+        {
+            $set: {
+                "mail": "john@gmail.com",
+                "name": "john"
+            }
+        }
+    )
+
++--------+
+| Delete |
++--------+
+
+    db.practiceCollection.remove(
+        {
+            "name": "John"
+        }
+    )
+
++------+
+| Find |
++------+
+
+    db.practiceCollection.find(
+        {
+            "name": "John"
+        }
+    )
+
+    db.practiceCollection.find(
+        {
+            $and: [
+                {
+                    "name": "John"
+                }, 
+                {
+                    "id": "2"
+                }
+            ]
+        }
+    )

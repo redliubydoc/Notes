@@ -1,0 +1,138 @@
++------------+
+| Subprogram |
++------------+
+
+    * A subprogram is a named PL/SQL block that can accept parameters and be invoked from a calling environment
+
+    * It is based on standard PL/SQL block structure
+
+    * out and inout parameters are not recommended in functions
+
+    * inout parameter will give compilation error in functions
+
+    * Size of datatype should not be specified in parameters but we can give reference type
+
+    +------------+
+    | Parameters |
+    +------------+
+
+    -> in (default) => used to send value
+    -> out => used to get value
+    -> in out => used to pass or retrieve value
+
+    +-----------+
+    | Procedure |
+    +-----------+
+
+        * Can be stored in the database, as a schema object, for repeated excution
+
+        * May or may not return a value
+        
+        * Procedure is executed as:
+            -> execute [or exec] <procedure_name>[()];
+        
+        * Can be executed within another procedure
+
+        +--------+
+        | Syntax |
+        +--------+
+
+            -> create [or replace] procedure <procedure_name> [(
+                <parameter_1> [mode] datatype,
+                <parameter_2> [mode] datatype,
+                . . .
+            )] is | as
+            [<declaration_statements>]
+            begin
+            [exception]
+            end [<procedure_name>];
+
+            -> drop procedure <procedure_name>;
+
+
+    +----------+
+    | Function |
+    +----------+
+
+        * A function is a procedure that always returns a value
+        
+        * The size of the datatype should not be included in the return datatype and return value should be of the same datatype defined in the header section
+
+        * Procedure is executed as:
+            -> select <function_name>() from dual;
+            -> or simply using <function_name>() in pl/sql block
+
+        +--------+
+        | Syntax |
+        +--------+
+
+            -> create [or replace] function <function_name> [(
+                <parameter_1> [mode] datatype,
+                <parameter_2> [mode] datatype,
+                . . .
+            )] return datatype is | as
+            [<declaration_statements>]
+            begin
+            [exception]
+            end [<procedure_name>];
+
+            -> drop function <procedure_name>;
+
++----------+
+| Examples |
++----------+
+    create function calculate_increment (
+        incperc number,
+        salary number
+    ) return number 
+    is 
+        v_increment_amount number := 0;
+    begin
+        v_increment_amount := salary * incperc * 0.01;
+        return v_increment_amount;
+    end;
+    /
+
+
+
+    create or replace function concat_name (
+        v_id employee.emp_id%type
+    ) return varchar2
+    as 
+        v_fname employee.first_name%type;
+        v_lname employee.last_name%type;
+    begin
+        select
+            first_name,
+            last_name
+        into
+            v_fname,
+            v_lname
+        from
+            employee
+        where
+            emp_id = v_id;
+            
+        return concat(v_fname, v_lname);
+    end;
+    /
+
+    create procedure insert_credit (
+        credit_id number,
+        credit_card_number varchar,
+        credit_card_expire varchar,
+        holder_name varchar,
+        card_type varchar
+    ) is 
+    begin
+        insert into
+            credit_card
+            values (
+                credit_id,
+                credit_card_number,
+                credit_card_expire,
+                holder_name,
+                card_type
+            );
+    end;
+    /

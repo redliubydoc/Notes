@@ -1,0 +1,22 @@
+-> DEFAULT:
+
+    1 -> DEFAULT <default_value>
+    * Default columns can take NULL values if provided explicitly
+
+-> NOT NULL:
+
+    ** It's a column level constraint only
+    CONSTRAINT [<constraint_name>] NOT NULL
+
+-> PRIMARY KEY
+
+
+-> UNIQUE:
+    * It may contain NULL
+
+-> CHECK:
+
+    CHECK (Gender IN ('M', 'F'))
+    
+    * It may be NULL
+    * Some commonly used operators with CHECK constraint are IN, LIKE, BETWEEN, AND, OR, NOT, >, <, etc.

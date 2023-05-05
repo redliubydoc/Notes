@@ -1,0 +1,15 @@
++----------+
+| Examples |
++----------+
+
+    (1) crate an user with following details
+        username:   practice
+        password:   @@hack
+
+        show con_name;
+        create user "practice" identified by "@@hack";
+        
+        alter session set container=newpdb;
+        
+        show con_name;
+        create user "practice" identified by "@@hack";

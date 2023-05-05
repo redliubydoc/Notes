@@ -1,0 +1,158 @@
+
+* PL/SQL stands for "Procedural Language extensions to the Structured Query Language"
+* PL/SQL is a block-structured language whose code is organized into blocks
+* A block itself is an executable statement, therefore we can nest a block within other blocks
+* Exponential Operator => **
+* PL/SQL is case-insensitive for identifiers
+
++----------------------+
+| Advantages of PL/SQL |
++----------------------+
+
+    -> Performance benifits:
+        The whole block is executed in one request to the Oracle server
+    -> It gives programming features
+    -> Protability & Modularity
+    -> Exception handle
+
++------------------+
+| PL/SQL Variables |
++------------------+
+
+    <identifier> [constant] [mode] <data_type> [not null] [:= | default <exception>]
+    
+    +----------+
+    | Examples |
+    +----------+
+
+        v_xyz date;
+        v_xyz number(2) not null := 10;
+        v_xyz varchar2(13) := 'Norway';
+        c_xyz constant number default 1400;
+        v_xyz number(2) not null := &v_xyz; -- for taking user input
+    
+        * we can take user inpput either in declaration or in execution section
+
+    +--------------------+
+    | Types of Variables |
+    +--------------------+
+
+        +------------------+
+        | PL/SQL Variables |
+        +------------------+
+
+            -> Scalar
+                -> char[(<max_length>)]
+                -> varchar2(<max_length>)
+                -> long
+                -> number[<precision>, <scale>]
+                -> boolean {TRUE / FALSE / NULL}
+                -> date
+                -> timestamp
+
+            -> Composite
+
+                * A composite type has an internal component that can be manipulated individually
+                
+                -> record: contains multiple scalar values, similar to a table record
+                -> table: tabular structure with multiple column and rows
+                -> varray: variable size array
+            
+            -> Reference
+                * Directly references a specific database field or record and assume the datatype of the associated field or record
+
+                -> %TYPE => database column or previously declared variable // <table_name>.<column_name>%type;
+                -> %ROWTYPE => a whole row // <table_name>%type;
+
+            -> LOB(Large Objects)
+                -> CLOB: Book
+                -> BLOB: Photo
+                -> BFILE: Movie
+                -> NCLOB: Similar to CLOB
+
+        +----------------------+
+        | Non-PL/SQL Variables |
+        +----------------------+
+
+            -> Bind variables
+            -> Host variables
+
++----------+
+| Comments |
++----------+
+
+    -- => Single line comments
+    /* */ => Multi line comments
+
++--------------------+
+| Control Statements |
++--------------------+
+
+    +-------------+
+    | Conditional |
+    +-------------+
+
+       
+    +-----------+
+    | Iterative |
+    +-----------+
+
+        +------------+
+        | Basic Loop |
+        +------------+
+
+            <label> loop
+                statements;
+            end loop <label>;
+
+            EXIT => The EXIT statement allows us to unconditionally exit the current iteration of a loop
+
+                loop
+                    if condition then
+                        exit;
+                    end if;
+                end loop;
+
+            EXIT WHEN => The EXIT WHEN statement exits the current iteration of a loop when the condition in the WHEN clause is TRUE
+           
+                loop
+                    l_counter := l_counter + 1;
+                    exit when l_counter > 3;
+                    dbms_output.put_line( 'Inside loop: ' || l_counter ) ;
+                end loop;
+
+        +----------+
+        | For Loop |
+        +----------+
+
+            ** Inside the loop, we can reference index but you cannot change its value
+
+            ** The results of lower_bound and upper_bound are rounded to the nearest integer if necessary
+
+            ** If we modify the values of lower_bound or upper_bound inside the loop, the change will have no effect because they are evaluated once only before the first loop iteration starts
+
+            ** upper_bound and lower_bound is inclusive
+
+            for <index> in <lower_bound> .. <upper_bound>
+            loop 
+                statements; 
+            end loop;
+
+        +------------+
+        | While Loop |
+        +------------+
+
+            while <condition {TURE | FALSE | NULL}>
+            loop
+                statements;
+            end loop;
+
+            declare
+                n_counter number := 1;
+            begin
+                while n_counter <= 5
+                loop
+                    dbms_output.put_line('Counter : ' || n_counter);
+                    n_counter := n_counter + 1;
+                end loop;
+            end;

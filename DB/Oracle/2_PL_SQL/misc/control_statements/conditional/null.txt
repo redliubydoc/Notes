@@ -1,0 +1,6 @@
+* The NULL statement is a NULL keyword followed by a semicolon (;). The NULL statement does nothing except that it passes control to the next statement
+
+    The NULL statement is useful to:
+        -> Improve code readability
+        -> Provide a target for a GOTO statement
+        -> Create placeholders for subprograms

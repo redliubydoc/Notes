@@ -1,0 +1,191 @@
++--------------+
+| Create Table |
++--------------+
+
+    <*> https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/CREATE-TABLE.html#GUID-F9CE0CC3-13AE-4744-A43C-EAC7A71AAAB6
+
+    create table <table_name> (
+        <column_name> <datatype> <colom_level_constrains>,
+        ...
+        <column_name> <datatype> <colom_level_constrains>,
+        <table_level_constraint>,
+        <composite_primary_key>,
+        <composite_foreign_key> [on delete cascade / on delete set null],
+    );
+
+    constraints_eaxmple ::= file:///media/monkey/Backup/Internship/Database%20Concepts/SQL/.assets/images/ddl_constraints_1.1.png
+
+    (#) Example:
+
+        create table payments (
+            payment_id  varchar2(3),
+            ticket_id varchar2(3),
+            bd_id number(11),
+            discount_id varchar2(3),
+
+            constraint pk_payments primary key (
+                payment_id
+            ),
+
+            constraint fk_payments_tickets foreign key (
+                ticket_id
+            ) references tickets (
+                ticket_id
+            ), 
+
+            constraint fk_payments_bookingdetails foreign key(
+                bd_id
+            ) references bookingdetails (
+                bd_id
+            ),
+
+            constraint fk_payments_discounts foreign key(
+                discount_id
+            ) references discounts (
+                discount_id
+            )
+        );
+
++----------+
+| TRUNCATE |
++----------+
+
+    -> Cannot be rollbacked
+    -> Makes the table empty keeping the structure intact
+   
+    truncate table 
+        <table_name>;
+
++------------+
+| Drop Table |
++------------+
+
+    -> drop table
+        [ <schema_name> ].<table_name>
+        [ cascade constraints ]
+        [ purge ];
+        
+
+    -> CASCADE CONSTRAINTS: 
+        -> All referential integrity constraints will be dropped along with dropping the table
+        -> We specify CASCADE CONSTRAINTS to drop all referential integrity constraints that refer to primary and unique keys in the dropped table. 
+        -> If we omit this clause, and such referential integrity constraints exist, then the database returns an error and does not drop the table.
+
+    -> PURGE: 
+        -> If specified, the table and its dependent objects will be purged from the recycle bin and we will not be able to recover the table. 
+        -> If not specified, the table and its dependent objects are placed in the recycle bin and can be recovered later, if needed
+
+        -> Oracle says, use the PURGE statement to remove a table or index from your recycle bin and release all of the space associated with the object, or to remove the entire recycle bin, or to remove part of all of a dropped tablespace from the recycle bin
+
++--------------+
+| Alter Column |
++--------------+
+
+    +------------+
+    | Add Column |
+    +------------+
+
+        alter table
+            <table_name> 
+        add 
+            <column_name> <column_definition>;
+
+        alter table 
+            <table_name>
+        add (
+            <column_1> <column_definition>,
+            <column_2> <column_definition>,
+            ...
+            <column_n> <column_definition>
+        );
+
+    +-------------+
+    | DROP Column |
+    +-------------+
+
+        alter table 
+            <table_name> 
+        drop column <column_name>;
+
+        alter table 
+            <table_name> 
+        drop (
+            column_name1, 
+            column_name2
+        );
+
+    +---------------+
+    | Modify Column |
+    +---------------+
+
+        Fig ddl_1.2 ::= file:///media/monkey/Backup/Internship/Database%20Concepts/SQL/.assets/images/ddl_1.2.png
+
+        alter table 
+            <table_name> 
+        modify 
+            <column_name> <column_definition>;
+
+        alter table 
+            <table_name>
+        modify (
+            <column_1> <column_definition>,
+            <column_2> <column_definition>,
+            ...
+            <column_n> <column_definition>
+        );
+
+        (#) Example 1:
+
+            alter table 
+                accounts
+            modify
+                email varchar2(100) not null;
+
+    +---------------+
+    | Rename Column |
+    +---------------+
+
+        alter table 
+            <table_name> 
+        rename column 
+            <column_name> to <new_column_name>;
+
++-------------+
+| Alter Table |
++-------------+
+
+    +--------------+
+    | Rename Table |
+    +--------------+
+
+        alter table 
+            <table_name> 
+        rename to
+            <new_table_name>;
+    
++------------------+
+| Alter Constrains |
++------------------+
+
+    +------------------+
+    | Enable / Disable |
+    +------------------+
+
+        alter table
+            <table_name> 
+        enable / disable constraints 
+            <constrains_name>;
+
+    +------------+
+    | Add / Drop |
+    +------------+
+
+        alter table
+            <table_name> 
+        drop constraint 
+            <constraint_name>;
+        
+        alter table
+            <table_name> 
+        add constraint 
+            <constraint_name> <constraint_description>;

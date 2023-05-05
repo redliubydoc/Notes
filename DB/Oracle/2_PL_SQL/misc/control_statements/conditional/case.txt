@@ -1,0 +1,141 @@
+
++-------------+
+| Simple Case |
++-------------+
+
+    case <selector> 
+        when <selector-value-1> 
+        then
+            <statements-1>
+        when <selector-value-2> 
+        then 
+            <statement-2>
+        else
+            <else-statements>
+    end case;
+
++---------------+
+| Searched Case |
++---------------+
+
+        case
+            when <condition-1> 
+            then
+                <statements-1>
+            when <condition-2> 
+            then 
+                <statements-2>
+            else
+                <else-statements>
+        end case;
+
++-----------------+
+| Case Expression |
++-----------------+
+
+    v_simple := case <selector>
+            when <selector-value-1> 
+            then
+                <statements-1>
+            when <selector-value-2> 
+            then
+                <statements-2>
+            else
+                <else-statements>
+        end;
+
+    v_searched := case
+            when <condition-1> 
+            then
+                <statements-1>
+            when <condition-2> 
+            then
+                <statements-2>
+            else
+                <else-statements>
+        end;
+
++----------+
+| Examples |
++----------+
+
+    (1) Simple case:
+
+        set serveroutput on;
+        
+        declare
+            v_grade char(1) := 'A';
+        begin
+            case v_grade
+                when 'A' 
+                then 
+                    dbms_output.put_line('Grade is A');
+                when 'B' 
+                then
+                    dbms_output.put_line('Grade is B');
+                when 'C' 
+                then
+                    dbms_output.put_line('Grade is C');
+                when 'D' 
+                then
+                    dbms_output.put_line('Grade is D');
+                else 
+                    dbms_output.put_line('NA');
+            end case;
+        end;
+        /   
+
+    (2) Searched case:
+
+        set serveroutput on;
+        
+        declare
+            v_grade char(1) := 'D';
+        begin
+            case
+                when v_grade = 'A' 
+                then 
+                    dbms_output.put_line('Grade is A');
+                when v_grade = 'B' 
+                then
+                    dbms_output.put_line('Grade is B');
+                when v_grade = 'C' 
+                then
+                    dbms_output.put_line('Grade is C');
+                when v_grade = 'D' 
+                then
+                    dbms_output.put_line('Grade is D');
+                else 
+                    dbms_output.put_line('NA');
+            end case;
+        end;
+        /   
+
+    (3) Case expression:
+
+        set serveroutput on;
+        
+        declare
+            v_grade char(1) not null := 'A';
+            v_message varchar2(100);
+        begin
+            v_message := case
+                when v_grade = 'A' 
+                then 
+                    'Grade is A'
+                when v_grade = 'B' 
+                then 
+                    'Grade is B'
+                when v_grade = 'C' 
+                then 
+                    'Grade is C'
+                when v_grade = 'D' 
+                then 
+                    'Grade is D'
+                else 
+                    'NA'
+            end;
+
+            dbms_output.put_line(v_message);
+        end;
+        /   

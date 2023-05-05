@@ -1,0 +1,62 @@
++----------------------+
+| Character Data Types |
++----------------------+
+
+    * In Oracle empty string is treated as NULL
+    * According to ANSI standard a character datatype must distinguish between NULL and empty strings
+
+    1 -> CHAR(size):
+        -> Stores the string only
+        -> If string size is less than the size specified then extra white space is added
+        -> Cannot store any string of size more than the specified size
+        -> Databases: Oracle
+
+    2 -> VARCHAR2(size):
+        -> Stores the string + length of the string
+        -> If string size is less than the size specified then no extra white space is added
+        -> Cannot store any string of size more than the specified size
+        -> Databases: Oracle
+
+    3 -> VARCHAR(size): work exactly same as VARCHAR2 in Oracle
+
++--------------------+
+| Integer Data Types |
++--------------------+
+
+    1 -> INTEGER:
+        -> Used to store whole number
+        -> Oracle internally stores in INTEGER as NUMBER(38)
+        -> INTEGER allows maximum 38 number of digits
+        -> If we store decimal value in INTEGER column then it will be auto-rounded and stored
+
+    2 ->  NUMBER(Precision, Scale):
+        -> It's specific to only Oracle databases
+        -> Precision => Total number of significant digits before and after the decimal
+        -> Scale => Number of significant digits after the decimal
+        -> If no scale is specified then by default the scale is 0
+        -> If the number of digits after the decimal is greater than the scale then the digits after the decimal is rounded to scale
+        -> If (precision - scale) < no. of digits before the decimal in the input number then ANSI
+        -> If no precision and scale are specified then this can store any decimal number with 38 significant digits and the number is stored without any change
+        -> Oracle will add trailing 0s if the number of significant digits in the input number is grater than 38
+
++--------------------------+
+| Miscellaneous Data Types |
++--------------------------+
+
+    1 -> DATE:
+        -> Stores date only
+        -> Benefits:
+            -> Checks validity of dates
+            -> Supports operations on date
+
+    2 -> TIMESTAMP:
+        -> Stores date + time up to one-billion of seconds
+
+    3 -> CLOB:
+        -> Stands for Character Large Objects
+        -> Used to store character data greater than 4000 bytes up to 128 TB
+
+    4 -> BLOB:
+        -> Stands for Binary Large Objects
+        -> Stores up to 128 TB
+        -> Used to store images, videos etc

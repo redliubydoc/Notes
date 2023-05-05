@@ -1,0 +1,52 @@
+** A trigger is a named PL/SQL block stored in the Oracle Database and executed automatically when a triggering event takes place
+
+** The maximum number of triggers that can be applied to a table is 12
+
+** The event can be any of the following
+    -> DML => INSERT | UPDATE | DELETE
+    -> DDL => CREATE | ALTER
+    -> A system event such as startup or shutdown of the Oracle Database.
+    -> A user event such as login or logout
+
++--------+
+| Syntax |
++--------+
+
+    -> create [or replace] trigger <trigger_name>
+        {before | after } <triggering_event> on <table_name>
+        [referening {old [as] <old_name | new [as] new_name>}]
+        [for each row | for each statement]
+        [follows | predeces <another_trigger>]
+        [enable | disable ]
+        [when condition]
+        declare
+        begin
+        exception
+        end;
+
+    -> alter trigger <trigger-name> disable;
+    -> alter table <table_name> disable all triggers;
+    -> alter table <table_name> enable all triggers;
+    -> drop trigger <trigger_name>;
+
++----------+
+| Examples |
++----------+
+
+** :new
+** :old
+
+    create trigger trigger_contact_af_update 
+        after update on contact for each row
+        declare
+            v_action varchar2(30) := 'After_Update_Contact';
+            v_org_name contact.org_name%type := :new.org_name;
+        begin
+            insert into
+                contact_log_history
+                values (
+                    v_org_name,
+                    v_action
+                );
+        end;
+        /

@@ -1,0 +1,517 @@
+<*> => References
+(*) => Notes
+(#) => Examples
+
+order_of_execution_of_dml_commands ::= file:///media/monkey/Backup/Internship/Database%20Concepts/SQL/.assets/images/dml_1.1.png
+
++--------+
+| DELETE |
++--------+
+
+    delete from
+        <table_name> 
+    [ where
+        <condition> ];
+
+    -> Reference options:
+
+        -> CASCADE:
+        -> SET NULL:
+        -> RESTRICT: Restrict the delete or update opion (Default)
+        -> These are implemented while creating the foreign keys
+
++--------+
+| UPDATE |
++--------+
+
+    update
+        <table_name>
+    set 
+        <column_name> = <new_value> 
+    [ where 
+        <condition> ];
+
++--------+
+| INSERT |
++--------+
+
+    insert ::= file:///media/monkey/Backup/Internship/Database%20Concepts/SQL/.assets/images/dml_1.2.png
+
+    Syntax: 
+        insert into <table_name> 
+            [ (<column_list>) ] 
+        values 
+            (<column_values>);
+
+        (*) multiple value insertion for mysql db
+
+        insert into <table_name> 
+            [ (<column_list>) ]
+        values 
+            (<column_values>),
+            (<column_values>),
+            (<column_values>),
+            (<column_values>),
+            .
+            .
+            .
+            (<column_values>);
+
+    (*) It's possible to insert multiple rows in oracle db also
+
++--------+
+| SELECT |
++--------+
+
+    * We can apply arithmatic operation in SELECT
+    * Formatting: <column_1> || 'and' || column_2 || "ok ok"
+    ** Space seperated string should be inside double quotes
+    ** NULL values are displayed at the last in ascending sequences.
+    ** Aggregate functions cannot be used in WHERE clause at any cost
+    ** DISTINCT operates on the entire row
+
+    select [ distinct ] 
+        <column_name> [ as [ <column_alise> ],
+        <column_name> [ as [ <column_alise> ],
+        .
+        .
+        .
+        <column_name> [ as [ <column_alise> ],
+        | *
+    from 
+        <table_name> [ <table_alias> ]
+    
+    [ where 
+        <conditions> ]
+
+    [ group by 
+        <group_statement> 
+    [ having 
+        <group_condition> ] ]
+        
+    [ order by 
+        [ asc / desc ] ];
+  
+
+    (#) Example 1: Get the total number of departments in the employee table
+        
+        select 
+            count (distinct dept)
+        from
+            employee;
+
++-----------+
+| (*) MERGE |
++-----------+
+
+    * UPDATE if the row exist or INSERT if it does not exist
+
+    MERGE INTO         --specifies the target table
+        <table_name>
+    USING 
+        <table_name>
+    ON 
+        (<join_condition>)
+    WHEN MACHED THEN
+        UPDATE SET
+            col1 = col_val1,
+            col2 = col_val2
+    WHEN NOT MACHED
+        INSERT [<column_list>]
+        VALUES <column_values>;
+
+    Example:
+
+        MERGE INTO
+            policyhistory as ph
+        USING 
+            policy p
+        ON 
+            (ph.pname = p.pname)
+        WHEN MACHED THEN
+            UPDATE SET
+                ph.count = ph.count + 1
+        WHEN NOT MACHED
+            INSERT (
+                ph.pname, 
+                ph.pcount
+            )
+            VALUES (
+                p.pname,
+                1
+            );
+
++----------+
+| GROUP BY |
++----------+
+
+    -> Works on the full row (at row level) 
+        -> Golden Rule: All column names from the select clause should either appear in the group by clause or be used in the aggregate functions.
+    -> It works on null values
+    -> It cannot be used on the columns on which grouping is not done
+    -> Aggregate functions can only be nested depth of 2
+        -> Inner function => intra group
+        -> Outer function => inter group
+        
+        (#) Example
+        
+            select
+                max(sum(staff_id)) 
+            from 
+                staff
+            group by
+                department_id;
+
+    (*) Alias name cannot be used in group by clause
+
++------------------------+
+| User Defined Functions |
++------------------------+
+
+    <*> mysql built-in functions: https://dev.mysql.com/doc/refman/5.7/en/built-in-function-reference.html
+    <*> oracle built-in functions: https://www.techonthenet.com/oracle/functions/index.php 
+
+    +-------------------------------+
+    | Single Row / Scaler Functions |
+    +-------------------------------+
+
+        -> Work on single row only
+        -> Applicable to  select / where / having statements
+        -> Can be nested to any level
+        -> Accepts column or an expression
+
+    +------------------------------------+
+    | Multiple Row / Aggregate Functions |
+    +------------------------------------+
+
+        -> Work on group of rows
+        -> Can be nested to a depth of 2
+        -> Cannot be used in where clause
+
+    +-------------+
+    | Simple Case |
+    +-------------+
+
+        +--------+
+        | Syntax |
+        +--------+
+
+            . 
+            .
+            .
+            case <selector>
+                when <selector_value_1> then <statements_1>
+                when <selector_value_2> then <statements_2>
+                ...
+                when <selector_value_n> then <statements_n>
+                [ else <else_statements> ]
+            end [ as ] <col_alias>
+            .
+            .
+            .
+
+        (#) Example 1:
+
+            select 
+                ename, 
+                empno,
+                
+                case deptno
+                    when 10 then 'Accounting'
+                    when 20 then 'Research'
+                    when 30 then 'Sales'
+                    when 40 then 'Operations'
+                    else 'Unknown'
+                end department
+
+            from 
+                emp
+            order by
+                ename;
+
+    +-------------+
+    | Search Case |
+    +-------------+
+
+        +--------+
+        | Syntax |
+        +--------+
+
+            .
+            .
+            .
+            case
+                when <condition_1> then <statements_1>
+                when <condition_2> then <statements_2>
+                ...
+                when <condition_n> then <statements_n>
+                [ else <else_statements> ]
+            end [ as ] <col_alias>;
+            .
+            .
+            .
+                        
+        (#) Example 1:
+            
+            select 
+                resortid, 
+                resortname,
+                
+                case 
+                    when (starrating <= 5.0 and starrating >= 4.5) 
+                        then 'Excellent Resort'
+                    when (starrating <= 4.4 and starrating >= 4.0) 
+                        then 'Very Good Resort'
+                    else 
+                        'Good Resort'
+                end comments
+
+            from 
+                resort;
+
+    +--------+
+    | DECODE |
+    +--------+
+
+        -> Oracle specific
+        -> It compares VALUE to IF value, one by one
+        -> If equal match found, return corresponding THEN value
+        -> If match is not found, the ELSE value is return, if coded
+        -> If ELSE is not coded and a match is not found, NULL is returned
+        -> Maximum number of item, including VALUE, IF, THEN and ELSE is 255
+        -> Its work only with equality check
+
+        +--------+
+        | Syntax |
+        +--------+
+
+            decode ( 
+                value, 
+                if_1 , then_1
+                [ if_2 , then_2 ],
+                .
+                .
+                .
+                [ if_n , then_n ] 
+                [, else]
+            )
+
+        
+        (#) Example 1:
+        
+            select 
+                supplier_name,
+
+                decode ( 
+                    supplier_id, 
+                    10000, 'IBM',
+                    10001, 'Microsoft',
+                    10002, 'Hewlett Packard',
+                    'Gateway'
+                ) result
+
+                from suppliers;
+
+    +-----------------------+
+    | Some Useful Functions |
+    +-----------------------+
+
+        -> nvl (<column_name>, <value_if_null>)
+        -> nvl2 (<column_name>, <value_if_not_null>, <value_if_null>)
+        -> coalesce (<column_name>, <column_name>, ...) => Returns 1st not null value
+        -> concat () => concatenate 2 string together 
+        -> initcap ()
+        -> ltrim () => The Oracle/PLSQL LTRIM function removes all specified characters from the left-hand side of a string
+                LTRIM('   tech')
+                Result: 'tech'
+
+                LTRIM('   tech', ' ')
+                Result: 'tech'
+
+                LTRIM('000123', '0')
+                Result: '123'
+
+                LTRIM('123123Tech', '123')
+                Result: 'Tech'
+
+                LTRIM('123123Tech123', '123')
+                Result: 'Tech123'
+
+                LTRIM('xyxzyyyTech', 'xyz')
+                Result: 'Tech'
+
+                LTRIM('6372Tech', '0123456789')
+                Result: 'Tech'
+        -> rtrim()
+        -> trim()
+            TRIM('   tech   ')
+            Result: 'tech'
+
+            TRIM(' '  FROM  '   tech   ')
+            Result: 'tech'
+
+            TRIM(LEADING '0' FROM '000123')
+            Result: '123'
+
+            TRIM(TRAILING '1' FROM 'Tech1')
+            Result: 'Tech'
+
+            TRIM(BOTH '1' FROM '123Tech111')
+            Result: '23Tech'
+        -> nullif (expr1, expr2)
+                The Oracle/PLSQL NULLIF function compares expr1 and expr2. If expr1 and expr2 are equal, the NULLIF function returns NULL. Otherwise, it returns expr1
+
+  
+Joins
+
+    <*> file:///media/monkey/Backup/Internship/Database%20Concepts/SQL/.assets/images/dml_1.3.png
+    <*> file:///media/monkey/Backup/Internship/Database%20Concepts/SQL/.assets/images/dml_1.4.png
+
+
+    ** Union and Intersection are commutaive and associative
+        => t1 join t2 join t3 => ((t1 join t2) join t3)
+        => the optimizer determines the
+            -> order of joining tables
+            -> indexes on the tables.
+
+    +----------+
+    | Equijoin |
+    +----------+
+
+        -> Join clause contains only equality operator
+        -> Equijoin combines rows that have equivalent values for the specified columns
+
+    +--------------+
+    | Non-Equijoin |
+    +--------------+
+        -> Opposite of Equijoin
+        
+    +--------------+
+    | Natural Join |
+    +--------------+
+
+        ** Column must have the same data type
+        ** NATURAL JOIN and USING clauses are mutually exclusive
+        * It's a type of Euijoin that compares the common columns of both the tables with each other
+        * Natural joins doesn't have table name appended at the front of column name
+
+        -> Example: * if one and only one common column is there
+            SELECT
+                cid,
+                cname,
+                pid
+            FROM 
+                customer
+            NATURAL JOIN
+                policyenrollment;
+            
+        -> Example: * if more than one common column is there
+            SELECT
+                cid,
+                cname,
+                pid
+            FROM 
+                customer
+            JOIN
+                policyenrollment
+            USING
+                (cid); 
+
+    +----------+
+    | Selfjoin |
+    +----------+
+
+        -> Join of a table with itself
+        -> Example:
+
+            SELECT
+                e1.last_name || ' works for ' || e2.last_name
+            FROM
+                employee e1, employee e2
+            WHERE 
+                e1.manager_id = e2.employee_id
+                AND e1.last_name LIKE 'R%';
+
+    +--------------------+
+    | Cartesian Products |
+    +--------------------+
+
+        * No join condition is given
+
+    +--------------------------+
+    | Inner Join / Simple Join |
+    +--------------------------+
+
+        -> Returns only those rows that satisfies the join condition
+
+    +------------+
+    | Outer Join |
+    +------------+
+
+        -> Returns rows that satisfies the condition + rows that does't satisfies the contition
+
+        * special plus operator: https://www.programmersought.com/article/8367850/
+
+        +-----------------------------+
+        | LEFT JOIN / LEFT OUTER JOIN |
+        +-----------------------------+
+
+            ** Every thing of left table is displayed
+            ** If there is no match then NULL is displayed on right
+
+        +-------------------------------+
+        | RIGHT JOIN / RIGHT OUTER JOIN |
+        +-------------------------------+
+
+            ** Every thing of right table is displayed
+            ** If there is no match then NULL is displayed on left
+
+        +-----------------------------+
+        | Full Outer Join / FULL JOIN |
+        +-----------------------------+
+
+            * All non-matching columns on both the tables has value as NULL 
+
+    +-----------+
+    | Antijoins |
+    +-----------+
+
+        * It returns rows that fail to match (NOT IN) the subquery on the right side
+        -> Following example selects a list of employees who are not in a particular set of departments
+            Example:
+                SELECT 
+                    * 
+                FROM employees 
+                WHERE 
+                    department_id 
+                    NOT IN 
+                    (
+                        SELECT department_id FROM departments 
+                        WHERE location_id = 1700
+                    )
+                ORDER BY 
+                    last_name;
+
+    +-----------+
+    | Semijoins |
+    +-----------+
+
+        -> A semijoin returns rows that match an EXISTS subquery without duplicating rows from the left side of the predicate when multiple rows on the right side satisfy the criteria of the subquery.
+
+        -> Example:
+            SELECT 
+                * 
+            FROM 
+                departments 
+            WHERE EXISTS 
+                (
+                    SELECT 
+                        * 
+                    FROM 
+                        employees 
+                    WHERE 
+                        departments.department_id = employees.department_id 
+                        AND 
+                        employees.salary > 2500
+                )
+            ORDER BY department_name; 

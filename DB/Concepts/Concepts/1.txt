@@ -1,0 +1,175 @@
++--------------------+
+| Advantages of DBMS |
++--------------------+
+
+    1 -> Reducing data redundancy and increases data consistency 
+    2 -> Backup and recovery
+    3 -> Data sharing 
+    4 -> Data integrity
+    5 -> Data security
+
+    -> Data Integrity: It refers to maintaining and assuring the (accuracy and consistency) of data over its entire life-cycle
+
++-----------------+
+| 4 Types of DBMS |
++-----------------+
+
+    1 -> Hierarchical // tree like // parent to child // one to many
+    2 -> Network // graph // many to many
+    3 -> Relational // in form of table // data access is faster than other models
+    4 -> NoSql (*)
+    ...in chronological order of their evolution.
+
++----------------------+
+| 4 Types of DBMS Users|
++----------------------+
+
+    1 -> Database admins:
+        -> Installation
+        -> Managing Users
+        -> DB Performance
+
+    2 -> End users:
+        -> Like normal users
+
+    3 -> Application programmers:
+        -> Who write application programs to interact with databases
+
+    4 -> Sophisticated users:
+        -> Use database query languages
+
++------------------+
+| Relational Model |
++------------------+
+
+    -> Tuple => Row
+    -> Attribute => Column
+    -> Cardinality => No. of Rows
+    -> Degree => No. of Attributes
+    -> Domain => Set of allowed values of a Column
+
++-------------------------+
+| Properties of Relations |
++-------------------------+
+
+    -> No duplicate tuples
+    -> Tuples and attributes are unordered
+    -> Attribute values are atomic
+
++-----------------------+
+| Integrity  Constrains |
++-----------------------+
+
+    * In DBMS data integrity is maintained through integrity constrains
+
+    -> Database Systems offer 3 types of integrity constraints:
+        1 -> Entity Integrity: Primary Key
+        2 -> Domain Integrity: Data types, check constrains
+        3 -> Referential Integrity: Foreign keys
+
++-------------------+
+| Components of SQL |
++-------------------+
+
+    1 -> DDL(4): CREATE, ALTER, TRUNCATE(*), DROP
+    2 -> DML(4): INSERT, DELETE, UPDATE, SELECT
+    3 -> TCL(2): COMMIT, ROLLBACK, SAVEPOINT
+    4 -> DCL(2): GRANT, REVOKE
+
++---------------+
+| Types of Keys |
++---------------+
+
+    ** Both foreign keys and primary kays can be composite
+    
+    +-------------+
+    | Primary Key |
+    +-------------+
+
+        -> Not mandetory but highly recommended
+        -> Unique && Not NULL
+        -> Simple / Composite
+        -> One && Only one per Table
+        -> Short is preferred
+
+    +---------------+
+    | Candidate Key |
+    +---------------+
+
+    -> It's a candidate for Primary Key
+
+    +-------------+
+    | Foreign Key |
+    +-------------+
+
+        -> Mapped with corresponding column in parent table
+        -> Reffering key in the parent table must be Unique / Primary key
+        -> Foreign Key in child table many be NULL and may not be Not Unique
+        -> The foreign key column and the referenced column must have same data type
+        -> A Table can have multiple foreign keys
+        -> As long as a child table is referencing to the parent table the parent cannot be (dropped / Truncated / ALTER (DDLs)) to maintain referential integrity
+        -> We can (DELETE / UPDATE (DMLs)) a value of the referred column in the parent table only if the child table doesn't contain an entry of it in the referencing column
+        -> Foreign key can be self referential
+
++---------------------------------------------+
+| Defining Composite Primary and Foreign Keys |
++---------------------------------------------+
+
+    CREATE TABLE accounts (
+        acc_num 
+            INTEGER,
+        acc_type 
+            INTEGER,
+        acc_descr 
+            CHAR(20),
+
+        PRIMARY KEY ( --composite primary key
+            acc_num, 
+            acc_type
+        )
+    );
+
+    CREATE TABLE sub_accounts (
+        sub_acc 
+            INTEGER 
+            PRIMARY KEY,
+        ref_num 
+            INTEGER 
+            NOT NULL,
+        ref_type 
+            INTEGER 
+            NOT NULL,
+        sub_descr 
+            CHAR(20),
+        
+        FOREIGN KEY (
+            ref_num, 
+            ref_type
+        ) 
+        REFERENCES      -- composite foreign key
+            accounts (
+                acc_num, 
+                acc_type
+            )
+    );
+
++----------------------+
+| Miscellaneous Points |
++----------------------+
+
+    * SQL is not case sensitive but the stored data is case sensitive
+    * If an operation contains NULL then the result is also NULL
+    * To get system date use SELECT SYSDATE FROM dual;
+    * The constraint names are stored in the build in table called "USER_CONSTRAINTS"
+    * It's a good practice to specify constraint name
+    
+
+    ** 
+        select 
+            department_id "Department Code",  
+            count(*) "No of Employees", 
+            sum(salary) "Total Salary" 
+        from
+            employees 
+        group by
+            department_id; 

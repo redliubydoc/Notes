@@ -1,0 +1,41 @@
+database 
+|
+|- collections (tables) 
+    |
+    |- documents (rows) 
+        |
+        |- fields (columns)
+        |   
+        |- sub documents (references)
+
++---------+
+| Example |
++---------+
+
+    (#) Example 1:  
+
+        {
+            "_id": {
+                "$oid": "634532cc44a35a84e0f53b01"
+            },
+            
+            "id": "1",
+            "name": "John",
+            "dob": "1990-01-14",
+
+            "department": {
+                "name": "CSE",
+                "location": "IN"
+            },
+
+            "subjects": [
+                {
+                    "name": "java",
+                    "marks_obtained": 80
+                },
+                {
+                    "name": "react",
+                    "marks_obtained": 90
+                }
+            ]  
+        }

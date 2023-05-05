@@ -1,0 +1,14 @@
+grant
+    update, delete | all
+on 
+    <table_name>
+to 
+    <user_name>;
+
+
+revoke
+    update, delete, ... | all
+on
+    <table_name>
+from
+    <user_name>

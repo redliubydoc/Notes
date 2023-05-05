@@ -1,0 +1,35 @@
++--------+
+| Theory |
++--------+
+
+    -> Applicable for only DML statements
+    -> DDL && DCL are autocommited
+    -> A Transaction will end when
+        -> COMMIT / ROLLBACK is issued
+        -> DDL / DCL command is issued
+        -> Command editor exits or System crash
+    -> Commit:
+        -> Everything will be commited (Even if nothing is there)
+        -> All the previous savepoints will be deleted 
+        -> Any attempt to rollback to previous save point will cause an error
+
+    -> Rollback:
+        Rollback will cause an error if there is nothing to rollback
+
+
++----------+
+| Examples |
++----------+
+
+-> Example 1:
+    /* dml commands */
+    commit / rollback;
+
+-> Example 2:
+
+    savepoint a;
+    /* dml commands */
+    savepoint b;
+    /* dml commands */
+    rollback to b;
+    rollback to a;

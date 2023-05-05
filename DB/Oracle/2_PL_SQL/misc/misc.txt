@@ -1,0 +1,11 @@
++--------------------+
+| Important Commands |
++--------------------+
+
+    +------------+
+    | SET DEFINE |
+    +------------+
+
+        -> the set define command changes the prefix character used to mark substitution variable.
+        -> syntax: set def[ine] { off | on | <prefix_char> }
+        -> by default it's on

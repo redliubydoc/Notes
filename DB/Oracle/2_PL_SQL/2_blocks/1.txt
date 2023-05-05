@@ -1,0 +1,67 @@
+** An anonymous block is not saved in the Oracle Database server, so it is just for one-time use
+
++--------+
+| Syntax |
++--------+
+
+    [declare]
+        <variables>,
+        <constants>
+        <cursors>,
+        <user defined exceptions>
+    begin
+        <sql statements>
+        <pl/sql statements>
+    [exception]
+        <action to be performed when an error occurs>
+    end;
+
++---------------------+
+| Declaration Section |
++---------------------+
+
+    A PL/SQL block has a declaration section where you declare variables, allocate memory for cursors, and define data types
+
++--------------------+
+| Executable Section |
++--------------------+
+
+    -> A PL/SQL block has an executable section. An executable section starts with the keyword BEGIN and ends with the keyword END
+    -> The executable section must have a least one executable statement, even if it is the NULL statement which does nothing.
+
++----------------------------+
+| Exception-handling Section |
++----------------------------+
+
+    A PL/SQL block has an exception-handling section that starts with the keyword EXCEPTION. The exception-handling section is where you catch and handle exceptions raised by the code in the execution section
+
++----------+
+| Examples |
++----------+
+    Example 1:
+        set serveroutput on;
+        begin
+            dbms_output.put_line ('Hello World!');
+        end;
+        /
+    
+    Example 2:
+        set serveroutput on;
+        declare
+            v_message varchar2(255) := 'Hello World!';
+        begin
+            dbms_output.put_line (v_message);
+        end;
+        /
+
+    Example 3:
+        set serveroutput on;
+        declare
+            v_result number;
+        begin
+            v_result := 1 / 0;
+        exception
+            when zero_divide then
+                dbms_output.put_line(SQLERRM);
+        end;
+        /

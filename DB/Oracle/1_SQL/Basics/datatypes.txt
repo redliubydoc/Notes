@@ -1,0 +1,171 @@
++----------+
+| Built-In |
++----------+
+
+    +-----------+
+    | Character |
+    +-----------+
+
+        <#> https://docs.oracle.com/cd/A87860_01/doc/server.817/a76965/c10datyp.htm
+
+        -> char(<size>):
+
+            -> The char datatype stores fixed-length character strings. When we create a table with a char column, we must specify a string length in bytes between 1 and 2000 for the char column width. The default is 1.
+            -> It has fixed length
+            -> If we give a shorter value, then the value is blank-padded to the fixed length.
+            -> If we give a longer value with trailing blanks, then blanks are trimmed from the value to the fixed length
+            -> If a value is too large, Oracle returns an error.
+
+        -> varchar and varchar2(<size>):
+
+            -> The varchar2 datatype stores variable-length character strings.
+            -> When we create a table with a varchar2 column, we specify a maximum string length in bytes between 1 and 4000 for the varchar2 column.
+            -> For each row, Oracle stores each value in the column as a variable-length field unless a value exceeds the column's maximum length, in which case Oracle returns an error.
+            -> For example, assume we declare a column varchar2 with a maximum size of 50 characters. In a single-byte character set, if only 10 characters are given for the varchar2 column value in a particular row, the column in the row's row piece stores only the 10 characters (10 bytes), not 50.
+            -> Oracle compares varchar2 values using nonpadded comparison semantics.
+            -> varchar2 doesn't distinguish between empty string and null and never will
+
+            Note: The varchar datatype is currently synonymous with the varchar2 datatype. However, in a future version of Oracle, varchar might store variable-length character strings compared with different comparison semantics. Therefore, to avoid possible changes in behavior we should always use the varchar2 datatype to store variable-length character strings.
+
+        -> nchar(<size>) and nvarchar2(<size>):
+            
+            -> The nchar and nvarchar2 datatypes store Oracle National Language Support (NLS) character data. The nchar datatype stores fixed-length character strings that correspond to a fixed-length or variable-length national character set. The nvarchar2 datatype stores variable-length character strings.
+            -> When we create a table with an nchar or nvarchar2 column, we specify a maximum size that is either the number of characters (for a fixed-length national character set) or the number of bytes (for a variable-length national character set).
+
+        -> long: 
+                
+                -> Columns defined as long can store variable-length character data containing up to two gigabytes of information. long data is text data that is to be appropriately converted when moving among different systems.
+
+                -> long datatype columns are used in the data dictionary to store the text of view definitions.
+
+                Note: The long datatype is provided for backward compatibility with existing applications. In new applications, we should use CLOB and NCLOB datatypes for large amounts of character data.
+    
+    +---------+
+    | Numeric |
+    +---------+
+            
+        -> number(<precision>, <scale>):
+
+            -> The number datatype stores fixed and floating-point numbers. 
+            -> It can store upto 38 digits of precision
+            -> Precision: Total number of significant digits before and after the decimal
+            -> Scale: Number of significant digits after the decimal
+            -> If a precision is not specified, the column stores values as given
+            -> If no scale is specified then by default the scale is 0
+            -> If the number of digits after the decimal is greater than the scale then the digits after the decimal is rounded to scale
+            -> If (precision - scale) < no. of digits before the decimal in the input number then ANSI
+            -> If no precision and scale are specified then this can store any decimal number with 38 significant digits and the number is stored without any change
+            -> Oracle will add trailing 0s if the number of significant digits in the input number is grater than 38
+            
+    +-----+
+    | LOB |
+    +-----+
+
+        -> The lob datatypes BLOB, CLOB, NCLOB, and BFILE enable we to store large blocks of unstructured data (such as text, graphic images, video clips, and sound waveforms) up to four gigabytes in size. They provide efficient, random, piece-wise access to the data.
+        -> We can perform parallel queries (but not parallel DML or DDL) on lob columns.
+
+        -> Types of CLOB 
+            
+            -> BLOB:
+
+                -> The BLOB datatype stores unstructured binary data in the database.
+                -> BLOB can store up to four gigabytes of binary data.
+            
+            -> CLOB and NCLOB:
+
+                -> CLOB is used to store large character objects
+                -> NCLOB is used to store large character objects in national character set
+            
+            -> BFILE:
+
+                -> The BFILE datatype stores unstructured binary data in operating-system files outside the database. A BFILE column or attribute stores a file locator that points to an external file containing the data. bfiles can store up to four gigabytes of data.
+
+                -> bfiles are read-only; we cannot modify them. They support only random (not sequential) reads, and they do not participate in transactions. The underlying operating system must maintain the file integrity and durability for bfiles. The database administrator must ensure that the file exists and that Oracle processes have operating-system read permissions on the file.
+
+    +---------------+
+    | Time Instance |
+    +---------------+
+
+        -> date:
+
+            -> The date datatype stores point-in-time values i.e date and time in a table. 
+            -> It stores the year (including the century), the month, the day, the hours, the minutes, and the seconds (after midnight).
+            -> For input and output of dates, the standard Oracle default date format is 'DD-MON-YY', i.e '13-NOV-92'.
+            -> We can change this default date format for an instance with the parameter NLS_DATE_FORMAT. We can also change it during a user session with the "alter session" statement.
+            -> To enter dates that are not in standard Oracle date format, use:
+                to_date('November 13, 1992', 'MONTH DD, YYYY')
+            -> Oracle stores time in 24 hr format 'HH:MI:SS' i.e 00:00:00 AM
+            -> By default, the time in a date field is 00:00:00 A.M. (midnight) if no time portion is entered.
+            -> In a time-only entry, the date portion defaults to the first day of the current month.
+            -> To enter the time portion of a date, use the to_date function with a format mask indicating the time portion, as in
+                insert into birthdays(
+                    bname, 
+                    bday
+                ) values (
+                    'ANDY',
+                    to_date('13-AUG-66 12:56 A.M.','DD-MON-YY HH:MI A.M.')
+                ); 
+            
+            -> Julian dates: Julian dates allow continuous dating by the number of days from a common reference
+            ->  The format mask "J" can be used with date functions (to_date or to_char) to convert date data into Julian dates. For example, the following query returns all dates in Julian date format:
+                select
+                    to_char(hiredate, 'J') 
+                from 
+                    emp; 
+
+            -> We must use the to_number() function if we want to use Julian dates in calculations. We can use the TO_DATE function to enter Julian dates:
+
+                insert into emp (
+                    hiredate
+                ) values (
+                    to_date(2448921, 'J')
+                ); 
+
+            Note: Oracle stores year data with century information. For example, the Oracle database stores 1996 or 2001, and not just 96 or 01
+
+        -> timestamp(<milisecond-precision>)
+
+            -> timestamp was added as an ANSI compliant to Oracle
+            -> In general cases we should use date. But if precision in time is a requirement, use timestamp
+            -> timestamp allows to store additional info such as fractional seconds (11 bytes) and fractional seconds with timezone (13 bytes).
+
+   
++--------------+
+| User-Defined |
++--------------+
+
+    +---------+
+    | Objects |
+    +---------+
+
+        -> Oracle object types are user-defined data types that make it possible to model complex real-world entities as unitary entities i.e objects in the database
+
+        -> New object types can be created from any built-in database types and/or any previously created object types, object references, and collection types
+
+        -> Oracle object technology is a layer of abstraction built on Oracle's relational technology. Underneath the object layer, data is still stored in columns and tables, but we are able to work with the data in terms of the real-world entities
+
+        +----------+
+        | Examples |
+        +----------+
+
+            create type address as object(
+                street_no   varchar2(25),
+                locality    varchar2(25),
+                city        varchar2(25),
+                pin         varchar2(25),
+                country     varchar2(7)
+            );
+
+            create table employee(
+                id      varchar2(20),
+                name    varchar2(20),
+                salary  number(10, 2),
+                address address
+            );
+
+            create table customer(
+                id      varchar2(20),
+                name    varchar2(20),
+                balance number(10, 2),
+                address address
+            )

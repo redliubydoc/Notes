@@ -1,0 +1,81 @@
+* Exception causes a PL/SQL block to terminate
+* Exception is raised during runtime
+
++-------+
+| Types |
++-------+
+
+    -> Implicit
+        -> TOO_MANY_ROWS
+        -> ZERO_DIVIDE
+        -> NO_DATA_FOUND
+        -> INVALID_CURSOR
+            -> Illegal cursor operation 
+            -> Example:
+                Closing an unopened cursor
+
+        -> DUPLICATE_VALUE_ON_INDEX
+            -> When we try to store duplicate value in an unique column
+
+        
+    -> Explicit (User Defined)
+        Example:
+            declare
+                invalid_age exception;
+                name varchar2(15):= '&name';
+                age number:=&age;
+
+            begin
+                if age > 18 then
+                    dbms_output.put_line (
+                        name || 
+                        'is eligible to vote'
+                    );
+                else
+                    raise invalid_age;
+                end if;
+
+            exception
+                when invalid_age then 
+                    dbms_output.put_line (
+                        name || 
+                        'is not eligible to vote'
+                    );
+            end;
+        /  
+
+
+    raise_application_error(
+        <error_number>, 
+        <message>, 
+        [{TRUE | FALSE}]
+    );
+
+    * The procedure raise_application_error allows us to issue an user-defined error from a code block or stored program.
+
+    * By using this procedure, we can report errors to the callers instead of returning unhandled exceptions
+
+    * If the third parameter is FALSE, the error replaces all previous errors. If it is TRUE, the error is added to the stack of previous errors
+
++---------------------------+
+| Exception Can Be Handled |
++---------------------------+
+    
+    -> By tapping it with a handler
+    -> By propagating it to the caller environment 
+
++--------+
+| Syntax |
++--------+
+
+    declare
+        -- declaration section
+    begin
+        -- exception section
+    exception
+        when ex_1 then 
+            -- error handler 1 
+        when ex_2 then 
+            -- error handler 3 
+    end;
+/  

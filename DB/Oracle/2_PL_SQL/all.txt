@@ -1,0 +1,1180 @@
+<*> => References
+(*) => Notes
+(#) => Examples
+
++------------------------------+
+| PL/SQL Variables / Constants |
++------------------------------+
+
+    -> We can declare constants and variables in the declarative part of any PL/SQL block, subprogram, or package. 
+    -> Declarations allocate storage for a value, specify its datatype, and specify a name that you can reference. 
+    -> Like all identifiers, the names of constants, variables, and parameters are not case sensitive.
+    -> Within the same scope, all declared identifiers must be unique; even if their datatypes differ, variables and parameters cannot share the same name
+
+    +-----------------------+
+    | Variables Declaration |
+    +-----------------------+
+
+        Fig 1.1: file:///D:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.1.gif
+
+    +-----------------------+
+    | Constants Declaration |
+    +-----------------------+
+
+        Fig 1.2: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.2.gif 
+    
++--------------------+
+| Control Structures |
++--------------------+ 
+
+    +--------+
+    | Loops  |
+    +--------+
+
+        +-------------+
+        | Basic Loops |
+        +-------------+
+
+            Fig 1.3: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.3.gif 
+
+            +----------+
+            | Examples |
+            +----------+
+
+                Example 1: exit
+
+                    declare
+                        counter number := 0;
+                    begin
+                        loop
+                            counter := counter + 1;
+                            if counter > 10 then
+                                exit;
+                            end if;
+                            dbms_output.put_line(counter);
+                        end loop;
+                    end;
+
+                Example 2: exit when
+
+                    declare
+                        counter number := 0;
+                    begin
+                        loop
+                            counter := counter + 1;
+                            exit when counter > 10;
+                            dbms_output.put_line(counter);
+                        end loop;
+                    end;
+                
+                Example 3: nested loop
+
+                    set serveroutput on;
+
+                    declare
+                        i number;
+                        j number;
+                    begin  
+                        i := 0;
+                        loop
+                            j := 0;
+                            i := i + 1;
+                            exit when i > 3;
+                            
+                            loop
+                                j := j + 1;
+                                exit when j > 3;
+                                
+                                dbms_output.put_line('i = ' || i || ', j = ' || j);
+                            end loop ;
+                            dbms_output.put_line('--------------------------');
+                        end loop ;
+                    end;
+                    /
+
+                Example 4: labels
+
+                    set serveroutput on;
+
+                    declare
+                        i number;
+                        j number;
+                    begin  
+                        i := 0;
+                        <<outer_loop>> loop
+                            j := 0;
+                            i := i + 1;
+                            exit outer_loop  when i > 3;
+                            
+                            <<inner_loop>> loop
+                                j := j + 1;
+                                exit inner_loop when j > 3;
+                                
+                                dbms_output.put_line('i = ' || i || ', j = ' || j);
+                                end loop inner_loop;
+                                dbms_output.put_line('--------------------------');
+                        end loop outer_loop;
+                    end;
+                    /
+
+        +-------------+
+        | While Loops |
+        +-------------+
+
+            Fig 1.4: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.4.gif 
+
+            -> Condition: true / false / NULL
+            -> When condition is false or null then the loop terminates
+            -> To terminate the loop prematurely, we use an exit / exit when statement
+
+        
+            +----------+ 
+            | Examples |
+            +----------+
+
+                Example 1:
+
+                    declare
+                        counter number := 1;
+                    begin  
+                        while counter <= 5 loop
+                            dbms_output.put_line(counter);
+                            counter := counter + 1;
+                        end loop;    
+                    end;
+                                
+        +-----------+
+        | For Loops |
+        +-----------+
+
+            Fig 1.5: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.5.gif 
+
+            -> The index is an implicit variable and is local to the for loop statement
+            -> Index is read-only
+            -> Both lower_bound and upper_bound are numbers or expressions that evaluate to numbers. Their values are stored as temporary PLS_INTEGER values. The results of lower_bound and upper_bound are rounded to the nearest integer if necessary.
+            -> If you modify the values of lower_bound or upper_bound inside the loop, the change will have no effect because they are evaluated once only before the first loop iteration starts
+
+            +----------+ 
+            | Examples |
+            +----------+
+
+                Example 1:
+
+                    begin
+                        for i in 1..5 loop
+                            dbms_output.put_line(i);
+                        end loop;
+                    end;
+                    /
+
+                Example 2:
+
+                    begin
+                        for i in reverse 1..5 loop
+                            dbms_output.put_line(i);
+                        end loop;
+                    end;
+                    /
+
+        +------------------+
+        | Cursor For Loops |
+        +------------------+
+
+            Fig 1.6: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.6.gif 
+                     file:///media/monkey/Backup/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.6.gif
+
+            +----------+ 
+            | Examples |
+            +----------+
+
+                Example 1: 
+
+        +----------------------+
+        | Important Statements |
+        +----------------------+
+
+            -> exit
+            -> exit when
+            -> continue 
+            -> continue when
+            -> null => no action
+            -> goto
+                Example:   
+
+                    declare
+                        p  varchar2(30);
+                        n  pls_integer := 37;
+                    begin
+                        for j in 2..round(sqrt(n)) loop
+                            if n mod j = 0 then
+                                p := ' is not a prime number';
+                                goto print_now;
+                            end if;
+                        end loop;
+
+                        p := ' is a prime number';
+                        <<print_now>> 
+                        dbms_output.put_line(to_char(n) || p);
+                    end;  
+
+            (*) usual behaviour
+
+    +-----------+
+    | Branching |
+    +-----------+
+
+        +---------------+
+        | IF THEN ELSIF |
+        +---------------+
+
+            +--------+
+            | Syntax |
+            +--------+
+
+                if <condition_1> then
+                    <statements_1>
+                elsif <condition_2> then
+                    <statements_2>
+                else
+                    <else_statements>
+                end if;
+
+        +-------------+
+        | Simple Case |
+        +-------------+
+
+            -> The simple case statement runs the first statements for which selector_value equals selector. Remaining conditions are not evaluated. If no selector_value equals selector, the case statement runs else_statements if they exist and raises the predefined exception case_not_found otherwise.
+
+            +--------+
+            | Syntax |
+            +--------+
+
+                case <selector>
+                    when <selector_value_1> then <statements_1>
+                    when <selector_value_2> then <statements_2>
+                    ...
+                    when <selector_value_n> then <statements_n>
+                    [ else <else_statements> ]
+                end case;
+
+            +----------+
+            | Examples |
+            +----------+
+
+                Example 1:
+
+                    declare
+                        grade char(1) := 'B';
+                    begin
+                        case grade
+                            when 'A' then dbms_output.put_line('Excellent');
+                            when 'B' then dbms_output.put_line('Very Good');
+                            when 'C' then dbms_output.put_line('Good');
+                            when 'D' then dbms_output.put_line('Fair');
+                            when 'F' then dbms_output.put_line('Poor');
+                            else dbms_output.put_line('No such grade');
+                        end case;    
+                    end;
+
+        +-------------+
+        | Search Case |
+        +-------------+
+
+            +--------+
+            | Syntax |
+            +--------+
+
+                case
+                    when <condition_1> then <statements_1>
+                    when <condition_2> then <statements_2>
+                    ...
+                    when <condition_n> then <statements_n>
+                    [ else <else_statements> ]
+                end case;
+
+            +---------+
+            | Example |
+            +---------+
+
+                Example 1:
+
+                    declare
+                        grade char(1) := 'B';
+                    begin
+                        case
+                            when grade = 'A' then dbms_output.put_line('Excellent');
+                            when grade = 'B' then dbms_output.put_line('Very Good');
+                            when grade = 'C' then dbms_output.put_line('Good');
+                            when grade = 'D' then dbms_output.put_line('Fair');
+                            when grade = 'F' then dbms_output.put_line('Poor');
+                            else dbms_output.put_line('No such grade');
+                        end case;
+                    end;
+
++------------------------------+
+|  Predefined PL/SQL Datatypes |
++------------------------------+
+
+    1 -> Composite
+        -> A composite type has internal components that can be manipulated individually, such as the elements of an array, record, or table
+        https://docs.oracle.com/cd/B19306_01/appdev.102/b14261/collections.htm#CIHIEBJC
+
+    2 -> LOB
+        -> A LOB type holds values, called lob locators, that specify the location of large objects, such as text blocks or graphic images, that are stored separately from other database data. LOB types include BFILE, BLOB, CLOB, and NCLOB. 
+        https://docs.oracle.com/cd/B19306_01/appdev.102/b14261/datatypes.htm#i43142
+
+
+    3 -> Reference
+        -> A reference type holds values, called pointers, that designate other program items. These types include REF CURSORS and REFs to object types.
+        https://docs.oracle.com/cd/B19306_01/appdev.102/b14261/sqloperations.htm#i7106
+
+    4 -> Scalar 
+        -> A scalar type has no internal components. It holds a single value, such as a number or character string. 
+        -> The scalar types fall into four families, which store number, character, boolean, and date/time data.
+        -> They are:
+            -> Number type
+                -> BINARY_DOUBLE
+                -> BINARY_FLOAT
+                -> BINARY_INTEGER
+                -> NATURAL
+                -> NATURALN
+                -> NUMBER
+                    -> Syntax: 
+                        -> NUMBER[(precision,scale)]
+                        -> Precision: It is the total number of digits 
+                        -> Scale: It is the number of digits to the right of the decimal point
+                        -> You cannot use constants or variables to specify precision and scale; you must use integer literals
+                        -> The maximum precision that can be specified for a NUMBER value is 38 decimal digits
+
+                    -> Use Cases:
+                        -> To declare fixed-point numbers, for which you must specify scale, use the following form that includes both precision and scale: NUMBER(precision,scale)
+
+                        -> To declare floating-point numbers, for which you cannot specify precision or scale because the decimal point can float to any position, use the following form without precision and scale: NUMBER
+
+                        -> To declare integers, which have no decimal point, use this form with precision only: NUMBER(precision) -- same as NUMBER(precision, 0)
+
+                    -> Subtypes:
+                        -> DEC
+                        -> DECIMAL
+                        -> DOUBLE PRECISION
+                        -> FLOAT
+                        -> INT
+                        -> INTEGER
+                        -> NUMERIC
+                        -> REAL
+                        -> SMALLINT
+
+                -> PLS_INTEGER
+                -> POSITIVE
+                -> POSITIVEN
+                -> SIGNTYPE
+
+            -> Character and String Types
+
+                -> CHAR
+                -> CHARACTER
+                -> LONG
+                -> LONG RAW
+                -> NCHAR
+                -> NVARCHAR2
+                -> RAW
+                -> ROWID
+                -> STRING
+                -> UROWID
+                -> VARCHAR
+                -> VARCHAR2
+                
+                (*) Note that the LONG and LONG RAW datatypes are supported only for backward compatibility
+            
+            -> Boolean Types
+
+                -> BOOLEAN
+
+            -> Date, Time, and Interval Types
+                
+                -> DATE
+                -> TIMESTAMP
+                -> TIMESTAMP WITH TIMEZONE
+                -> TIMESTAMP WITH LOCAL TIMEZONE
+                -> INTERVAL YEAR TO MONTH
+                -> INTERVAL DAY TO SECOND
+
++-----------------------+
+| Collections & Records |
++-----------------------+
+    
+    <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/composites.htm#LNPLS005
+
++------------+
+| Exceptions |
++------------+
+
+    exception_handler ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/exception_handling_1.1.gif
+    user_exception_declaration ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/exception_handling_1.2.gif
+
+    -> Exceptions are run-time errors
+    -> Exception causes a PL/SQL block to terminate
+    -> Exceptions can be either pre-defined or user-defined or internally-defined
+    -> Exceptions can be handled either by tapping it with a handler or by propagating it to the caller environment 
+    -> 3 steps of exception handling:
+        1 -> define an exception if it's an user defined exception
+        2 -> raise the exception
+        3 -> Catch the exception 
+
+    +------------------------------+
+    | Internally Defined Exception |
+    +------------------------------+
+
+        -> The runtime system raises internally defined exceptions implicitly (automatically). Examples of internally defined exceptions are ORA-00060 (deadlock detected while waiting for resource) and ORA-27102 (out of memory).
+
+        -> An internally defined exception always has an error code, but does not have a name unless PL/SQL gives it one or you give it one.
+
+    +------------------------+
+    | Pre-defined Exceptions |
+    +------------------------+
+
+        <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/errors.htm#LNPLS00703
+
+        -> A predefined exception is an internally defined exception that PL/SQL has given a name. For example, ORA-06500 (PL/SQL: storage error) has the predefined name STORAGE_ERROR
+
+    +------------------------+
+    | User-defined Exception |
+    +------------------------+
+            
+        (#) Example 1:
+
+                declare
+                    invalid_age exception;
+                    name varchar2(15) := '&name';
+                    age number := &age;
+
+                begin
+                    if (age > 18) then 
+                        dbms_output.put_line(name || 'is eligible to vote');
+                    else 
+                        raise invalid_age;
+                    end if;
+
+                exception
+                    when invalid_age then 
+                        dbms_output.put_line(name || 'is not eligible to vote');
+                end;
+            /  
+
+
+        raise_application_error(
+            num => -20000, -- error_number
+            msg => 'Unexpected error: '|| DBMS_Utility.Format_Error_Stack -- message,
+            true -- operation : true / false
+        );
+
+        -> The procedure raise_application_error() allows us to issue an user-defined error from a code block or stored program. By using this procedure, we can report errors to the callers instead of returning unhandled exceptions.  If the third parameter is FALSE, the error replaces all previous errors. If it is TRUE, the error is added to the stack of previous errors. 
+
++------------------+
+| Anonymous Blocks |
++------------------+
+
+    <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/block.htm#LNPLS01303
+
+    +--------+
+    | Syntax |
+    +--------+
+
+        [declare]
+            <variables>,
+            <constants>
+            <cursors>,
+            <user defined exceptions>
+        begin
+            <sql statements>
+            <pl/sql statements>
+        [exception]
+            <action to be performed when an error occurs>
+        end;
+
++-----------+
+| Functions |
++-----------+
+
+    Fig 1.7: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.7.gif
+    (*) Functions can be optionally ended by function_name;
+    
+    -> User functions can be used as part of a SQL expression.
+    -> If you omit schema, Oracle Database creates the function in your current schema
+    -> Removing function    
+    Fig 1.8: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.8.gif
+
+    -> Use the ALTER FUNCTION statement to recompile an invalid standalone stored function. Explicit recompilation eliminates the need for implicit run-time recompilation and prevents associated run-time compilation errors and performance overhead
+    Fig 1.9: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.9.gif
+
+    -> The datatype cannot specify a length, precision, or scale. Oracle Database derives the length, precision, or scale of the return value from the environment from which the function is called.
+    -> Calling function: <function_name>([<parameter_1>, <parameter_2>, ..., <parameter_n>]);
+
++------------+
+| Procedures |
++------------+
+
+    Fig 1.10: file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.10.gif
+    (*) Procedures can be optionally ended by procedure_name;
+
+    -> Datatypes cannot specify length, precision, or scale. For example, VARCHAR2(10) is not valid, but VARCHAR2 is valid. Oracle Database derives the length, precision, and scale of an argument from the environment from which the procedure is called
+
+    -> A standalone procedure can be called in two ways:
+        1 -> Using the EXECUTE keyword
+        2 -> Calling the name of the procedure from a PL/SQL block
+        (*) procedure_name[(<parameter_1>, <parameter_2>, ..., <parameter_n)];
+        (*) procedure_name[(
+                <parameter_1_name> => <parameter_1>, 
+                <parameter_2_name> => <parameter_2>, 
+                ..., 
+                <parameter_n_name> => <parameter_n>
+            )];
+
+    -> To remove a procedure we use: drop procedure <procedure_name>;
+
++----------+
+| Triggers | 
++----------+
+
+    create_trigger ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.11.gif
+        trigger_source ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.12.gif
+
+            simple_dml_trigger ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.13.gif
+                dml_event_clause ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.14.gif
+                referencing_clause ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.15.gif
+                trigger_edition_clause ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.16.gif
+                trigger_ordering_clause ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.17.gif
+                trigger_body ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.18.gif
+
+            system_trigger ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/fig_1.19.gif
+
+        
+    -> A trigger is a named PL/SQL unit that is stored in the database and can be invoked repeatedly.
+    -> Unlike a stored procedure, we can enable and disable a trigger, but we cannot explicitly invoke it
+    -> The database automatically invokes it whenever its triggering event occurs
+    -> Commit is not allowed in triggers
+
+    -> Disable / Enable trigger: 
+        alter trigger <trigger_name> disable / enable;
+   
+    -> Disable / Enable all the triggers present on the table:
+        alter table <table_name> disable / enable all triggers;
+
+    -> Dropping trigger:
+        drop trigger <trigger_name>;
+    -> Renaming a trigger:
+        alter trigger <old_trigger_name> rename to <new_trigger_name>;
+
+    <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/create_trigger.htm#BABGDFBI
+    
+    +--------------+
+    | DML Triggers |
+    +--------------+
+
+        <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/triggers.htm#CIHEHBEB
+        <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/create_trigger.htm#CIHBJHFE
+
+        -> A DML trigger is created on either a table or view
+        -> Its triggering event is composed of the DML statements DELETE, INSERT, and UPDATE
+        -> A trigger that fires at row level can access the data in the row that it is processing by using correlation names. The default correlation names are OLD, NEW, and PARENT. To change the correlation names, use the REFERENCING clause of the CREATE TRIGGER statement
+        -> When condition specifies a SQL condition that the database evaluates for each row that the triggering statement affects. If the value of condition is TRUE for an affected row, then trigger_body runs for that row; otherwise, trigger_body does not run for that row. 
+        -> The triggering statement runs regardless of the value of condition
+
+        (*) To create a trigger that fires in response to a MERGE statement, create triggers on the INSERT and UPDATE statements to which the MERGE operation decomposes
+
+
+        (#) Example 1:
+
+            create or replace trigger customer_before_update
+                before 
+                    update
+                on customer   
+                declare
+                    var_username varchar2(10);
+                begin
+                    -- lets find the user who is performing the action
+                    select 
+                        user 
+                    into 
+                        var_username
+                    from 
+                        dual;
+                        
+                    insert into audit_table (
+                        table_name,
+                        userid,
+                        operation_date,
+                        operation
+                    ) values (
+                        'customer',
+                        var_username,
+                        sysdate,
+                        'before update operation'
+                    );
+                end customer_before_update;
+            /    
+
+        (#) Example 2: 
+            
+            create or replace trigger customer_after_action
+                after 
+                    insert or
+                    update or
+                    delete
+                on customer
+                declare
+                    var_username varchar2(10);
+                begin
+                    select
+                        user 
+                    into 
+                        var_username
+                    from
+                        dual;
+
+                    if inserting then
+                        insert into audit_table (
+                            table_name,
+                            userid,
+                            operation_date,
+                            operation
+                        ) values (
+                            'customer',
+                            var_username,
+                            sysdate,
+                            'insert operation'
+                        );
+                    elsif updating then
+                        insert into audit_table (
+                            table_name,
+                            userid,
+                            operation_date,
+                            operation
+                        ) values (
+                            'customer',
+                            var_username,
+                            sysdate,
+                            'update operation'
+                        );
+                    elsif deleting then
+                        insert into audit_table (
+                            table_name,
+                            userid,
+                            operation_date,
+                            operation
+                        ) values (
+                            'customer',
+                            var_username,
+                            sysdate,
+                            'delete operation'
+                        );
+                    end if;
+                end;
+
+        (#) Example 3:
+
+                create or replace trigger customer_after_updating_values
+                    after
+                        update
+                    on customer
+                    for each row
+                    declare
+                        var_username varchar2(10);
+                    begin
+                        select
+                            user
+                        into 
+                            var_username
+                        from 
+                            dual;
+
+                        insert into audit_log 
+                            values (
+                                var_username,
+                                sysdate,
+                                :old.customer_id,
+                                :new.customer_id,
+                                :old.first_name,
+                                :new.first_name
+                            );
+                    end;
+
+        (#) Example 4:
+            create or replace trigger customer_after_updating_values
+                after
+                    update of
+                        customer_id,
+                        customer_name
+                on customer
+                for each row
+                declare
+                    var_username varchar2(10);
+                begin
+                    select
+                        user
+                    into 
+                        var_username
+                    from 
+                        dual;
+
+                    insert into audit_log 
+                        values (
+                            var_username,
+                            sysdate,
+                            :old.customer_id,
+                            :new.customer_id,
+                            :old.first_name,
+                            :new.first_name
+                        );
+                end;
+
+        (#) Example 5:
+
+            create or replace trigger customer_after_updating_values
+                after 
+                    update
+                on customer
+                for each row
+                when (
+                    lower(old.region) = 'south'
+                )    
+                declare
+                    var_username varchar2(10);
+                begin
+                    select
+                        user
+                    into 
+                        var_username
+                    from 
+                        dual;
+
+                    insert into audit_log 
+                        values (
+                            var_username,
+                            sysdate,
+                            :old.customer_id,
+                            :new.customer_id,
+                            :old.first_name,
+                            :new.first_name
+                        );
+                end;
+       
+    +-----------------+
+    | System Triggers |
+    +-----------------+
+
+        -> System trigger is created on either a schema or the database
+        -> Its triggering event is composed of either DDL statements
+
+        -> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/triggers.htm#CIHEFBJA
+
+
+        +-----------------+
+        | Schema Triggers |
+        +-----------------+
+
+            -> A SCHEMA trigger is created on a schema and fires whenever the user who owns it is the current user and initiates the triggering event.
+            
+            +----------+
+            | Examples |
+            +----------+
+
+                Example 1: Creates a BEFORE statement trigger on the sample schema HR. When a user connected as HR tries to drop a database object, the database fires the trigger before dropping the object.
+
+                    create or replace trigger drop_trigger
+                        before drop on hr.schema
+                            raise_application_error (
+                                num => -20000,
+                                msg => 'Cannot drop object'
+                            );
+                        begin
+                        end;
+                        /
+            
+        +-------------------+
+        | Database Triggers |
+        +-------------------+
+
+            -> A DATABASE trigger is created on the database and fires whenever any database user initiates the triggering event.
+
+            +----------+
+            | Examples |
+            +----------+
+
+                Example 1: Show the basic syntax for a trigger to log errors. This trigger fires after an unsuccessful statement execution, such as unsuccessful logon.
+
+                    create trigger log_errors
+                        after servererror on database
+                        begin
+                            if (is_servererror(1017)) then
+                                null;
+                            else
+                            null;
+                            end if;
+                        end;
+                        /
+
+                    
+                    (*) An AFTER SERVERERROR trigger fires only if Oracle relational database management system (RDBMS) determines that it is safe to fire error triggers.
+
+                Example 2: 
+
+                    create or replace trigger check_user
+                        after logon on database
+                        begin
+                            check_user;
+                        exception
+                            when others then
+                                raise_application_error(
+                                    num => -20000,
+                                    msg => 'Unexpected error: '|| DBMS_Utility.Format_Error_Stack
+                                );
+                        end;
+                        /
+
++----------+
+| Packages |
++----------+
+
+    <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/packages.htm#LNPLS00902
+
+    -> A package is a schema object that groups logically related PL/SQL types, variables, constants, subprograms, cursors, and exceptions. 
+    -> A package is compiled and stored in the database, where many applications can share its contents
+    -> A package always has a specification, which declares the public items that can be referenced from outside the package. You can think of the package specification as the application programming interface (API).
+    -> If the public items include cursors or subprograms, then the package must also have a body. The body must define queries for public cursors and code for public subprograms. The body can also declare and define private items that cannot be referenced from outside the package, but are necessary for the internal workings of the package. Finally, the body can have an initialization part, whose statements initialize variables and do other one-time setup steps, and an exception-handling part. You can change the body without changing the specification or the references to the public items; therefore, you can think of the package body as a black box.
+
+
+    +-----------------------+
+    | Package Specification |
+    +-----------------------+
+
+        create_package ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/package_1.1.gif
+        invoker_rights_clause ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/package_1.2.gif
+
+
+        (#) Example 1:
+
+                create or replace package emp_mgmt as 
+                    function hire(
+                        last_name varchar2, 
+                        job_id varchar2, 
+                        manager_id varchar2, 
+                        salary number, 
+                        commission_pct number, 
+                        department_id number
+                    ) return number;
+
+                    function create_dept(
+                        department_id number, 
+                        location_id number
+                    ) return number;
+
+                    procedure remove_emp(
+                        employee_id number
+                    ); 
+
+                    procedure remove_dept(
+                        department_id number
+                    ); 
+
+                    procedure increase_sal(
+                        employee_id number, 
+                        salary_incr number
+                    );
+
+                    procedure increase_comm(
+                        employee_id number, 
+                        comm_incr number
+                    ); 
+
+                    no_comm exception; 
+                    no_sal exception; 
+                end emp_mgmt; 
+                /
+        
+    +--------------+
+    | Package Body |
+    +--------------+
+
+        create_package_body ::= ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/package_1.3.gif
+        initialize_section ::= ::= file:///E:/Internship/Database%20Concepts/PL_SQL/.assets/images/package_1.4.gif
+
+
+        (#) Example 1:
+            
+            create or replace package body emp_mgmt as 
+                tot_emps number; 
+                tot_depts number; 
+
+                function hire(
+                    last_name varchar2, 
+                    job_id varchar2, 
+                    manager_id varchar2, 
+                    salary number, 
+                    commission_pct number, 
+                    department_id number
+                ) return number is
+                    new_empno number; 
+                begin 
+                    select 
+                        employees_seq.nextval 
+                    into 
+                        new_empno 
+                    from dual;
+
+                    insert into employees values(
+                        new_empno, 
+                        'First', 
+                        'Last',
+                        'first.example@example.com', 
+                        '(415)555-0100',
+                        '18-JUN-02',
+                        'IT_PROG',
+                        90000000,00, 
+                        100,110
+                    ); 
+
+                    return new_empno; 
+                end;
+
+                . . .
+
+                procedure increase_comm(
+                    employee_id number, 
+                    comm_incr number
+                ) is
+                    curr_comm number; 
+                begin 
+                    select
+                        commission_pct 
+                    into
+                        curr_comm 
+                    from
+                        employees 
+                    where 
+                        employees.employee_id = increase_comm.employee_id; 
+                    
+                    if curr_comm is null then 
+                        raise no_comm; 
+                    else
+                        update 
+                            employees 
+                        set 
+                            commission_pct = commission_pct + comm_incr; 
+                    end if; 
+                end; 
+            end emp_mgmt; 
+            / 
+
++---------+
+| Cursors |
++---------+
+
+    <*> https://docs.oracle.com/cd/B13789_01/appdev.101/b10807/13_elems013.htm
+    <*> https://www.oracletutorial.com/plsql-tutorial/plsql-cursor
+    <*> https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/cursor_for_loop_statement.htm#LNPLS1155
+
+    -> A cursor is a pointer that points to a result of a query. 
+    -> There are types of cursors, they are implicit cursors and explicit cursors. 
+    -> Cursors can hold multiple row but can process only one row at a time
+    -> The total no. of rows that a cursor can hold is called active set
+
+    +-----------------+
+    | Implicit cursor |
+    +-----------------+
+
+        -> Whenever Oracle executes an SQL statement such as SELECT INTO, INSERT, UPDATE, and DELETE, it automatically creates an implicit cursor
+
+        -> Oracle internally manages the whole execution cycle of implicit cursors and reveals only the cursor’s information and statuses such as 
+            -> SQL%ROWCOUNT 
+            -> SQL%ISOPEN
+            -> SQL%FOUND
+            -> SQL%NOTFOUND
+
+    +-----------------+
+    | Explicit cursor |
+    +-----------------+
+
+        -> An explicit cursor is an SELECT statement declared explicitly in the declaration section of the current block or a package specification
+        -> For an explicit cursor, we have control over its execution cycle from OPEN, FETCH, and CLOSE.
+        -> We can pass parameters to a parameterized cursor while opening it
+
+    +------------------------+
+    | Cursor Execution Cycle |
+    +------------------------+
+
+        cursor_life_cycle ::= file:///media/monkey/Backup/Internship/Database%20Concepts/PL_SQL/.assets/images/cursor_1.3.gif
+
+        Declaration:
+
+            cursor_declaration ::= file:///media/monkey/Backup/Internpk_paymentsship/Database%20Concepts/PL_SQL/.assets/images/cursor_1.1.gif
+            rowtype ::= file:///media/monkey/Backup/Internship/Database%20Concepts/PL_SQL/.assets/images/cursor_1.2.gif
+
+        Open:
+
+            -> Oracle parses the query, binds variables, and executes the associated SQL statement
+            -> Oracle also determines an execution plan, associates host variables and cursor parameters with the placeholders in the SQL statement, determines the result set, and sets the cursor to the first row in the result set
+
+            Syntax:
+                -> open <cursor_name>;
+                -> open <cursor_name> (<value_list>);
+
+        Fetch (Iterative):
+            
+            -> The FETCH statement places the contents of the current row into variables
+
+            Syntax:
+                fetch <cursor_name> into <variable_list / record_name>;
+
+        close:
+
+            -> Closing a cursor instructs Oracle to release allocated memory at an appropriate time
+            -> If we declare a cursor in an anonymous block, procedure, or function, the cursor will automatically be closed when the execution of these objects end
+            -> However, we must explicitly close package-based cursors
+            -> Note that if you close a cursor that has not opened yet, Oracle will raise an INVALID_CURSOR exception
+
+            Syntax:
+                close <cursor_name>;
+
+    +----------------------------+
+    | Explicit Cursor Attributes |
+    +----------------------------+
+
+        Syntax:
+            <cursor_name>%<attribute_name> -- cursor_name = sql for implicit cursor
+
+            1-> %isopen (true / false)
+
+            2-> %found
+                    NULL before the first fetch
+                    TRUE if a record was fetched successfully
+                    FALSE if no row returned
+                    INVALID_CURSOR if the cursor is not opened
+
+            3-> %notfound (Opposite of %found)
+
+            4-> %rowcount
+                * It returns the number of rows fetched so far
+                * If the cursor is not opened, this attribute returns invalid_cursor
+                * When a cursor is opened, %rowcount is 0
+
+    (#) Example 1: simple
+        cursor some_cursor is
+            select
+                empno,
+                ename,
+                job,
+                sal 
+            from
+                emp;
+            where
+                sal > 2000;
+
+    (#) Example 2: with return type
+        cursor some_cursor return dept%rowtype is
+            select 
+                *
+            from
+                dept
+            where
+                deptno = 10;
+
+    (#) Example 3: parameterized cursors
+        cursor some_cursor (
+            start_date date
+        ) is
+            select
+                empno,
+                sal
+            from
+                emp
+            where
+                hiredate > start_date;
+
+    (#) Example 4: cursor life cycle using while loop
+
+        declare
+            cursor c_emp_cursor is
+                select
+                    emp_id,
+                    last_name
+                from
+                    employees
+                where
+                    department_id = 30;
+
+            v_empid employees.emp_id%TYPE;
+            v_lname employees.last_name%TYPE;        
+        begin
+            open c_emp_cursor;
+
+            loop
+                fetch c_emp_cursor into v_empid, v_lname;
+                exit when c_emp_cursor%NOTFOUND; 
+                dbms_output.put_line(v_empid || ' ' || v_lname);
+            end loop;
+            close c_emp_cursor;
+        end;
+
+    (#) Example 5: cursor life cycle using for loop
+
+        declare
+            cursor emp_cur is 
+                select
+                    *
+                from 
+                    employees
+                where
+                    salary > 10000;
+        begin
+            for emp_rec in emp_cur loop
+                dbms_output.put_line('Name: ' || emp_rec.name);
+                dbms_output.put_line('Address: ' || emp_rec.address);
+            end loop;
+        end;
+        /
+    
+    (#) Example 6: cursor life cycle using for loop
+
+        begin
+            for r_product in (
+                    select 
+                        product_name, 
+                        list_price 
+                    from 
+                        products
+                    order by 
+                        list_price desc
+            ) loop
+                dbms_output.put_line(r_product.product_name || ': $' || r_product.list_price );
+            end loop;
+        end;
+
+    (#) Example: parameterized cursors with for loop
+
+        declare
+            cursor cursorValue(
+                p_product_id number
+            ) is
+                select 
+                    h.product_description, 
+                    o.company_short_name
+                from 
+                    company o, 
+                    product h
+                where 
+                    o.product_id = h.product_id and h.product_id = p_product_id
+                order by 
+                    2;
+
+            v_company_rec cursorValue%rowtype;
+        begin
+            for idx in cursorValue(1) loop
+                dbms_output.put_line(rpad(idx.product_description,20,' ')||' '|| rpad(idx.company_short_name,30,' '));
+            end loop;
+
+            for idx in cursorValue(2) loop
+                dbms_output.put_line(rpad(idx.product_description,20,' ')||' '|| rpad(idx.company_short_name,30,' '));
+            end;
+        end;
+        /
