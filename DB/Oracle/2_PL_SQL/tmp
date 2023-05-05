@@ -1,0 +1,49 @@
+
++----------------------+
+| Composite Data Types |
++----------------------+
+
+    -> pl/sql records
+    -> pl/sql collection
+        -> index by table
+        -> nested table
+        -> varray
+
+https://www.oracle-dba-online.com/sql/oracle_objects_and_types.htm
+
++-------------------------+
+| User Defined Data Types |
++-------------------------+
+
+ 
+
+
+
+
+
+
+
++-----------------------------+
+| Inbuild Date Types (PL/SQL) |
++-----------------------------+
+
+    +--------+
+    | Scalar |
+    +--------+
+
+    +-----------+
+    | Composite |
+    +-----------+
+
+    +-----------+
+    | Reference |
+    +-----------+
+
+    +-----+
+    | LOB |
+    +-----+
+
+        -> bfile: System dependent, cannot exceed 4 gb
+        -> blob: upto 128 tb
+        -> clob: upto 128 tb
+        -> nclob: upto 128 tb
