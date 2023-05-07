@@ -1,0 +1,17 @@
+EC2  => Elastic Compute Cloud
+
++-----------------+
+| Security Groups |
++-----------------+
+
+    -> We can create a security group for EC2 instances that essentially operates as a firewall, with rules that determine what network traffic can enter and leave.
+
+
++-----------+
+| Instances |
++-----------+
+
+    name        :   ec2_instance_2
+    ssh_command :   ssh -i "C:\Users\John Doe\.ssh\ssh_key_pair_01.pem" ubuntu@54.211.25.121
+    private ip  :   172.31.85.253
+
