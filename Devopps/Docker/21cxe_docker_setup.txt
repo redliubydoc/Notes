@@ -1,0 +1,41 @@
+# clean
+docker image rm --force dockerhubaccount001/image_21cxe
+docker volume rm --force volume_21cxe
+docker container rm --force container_21cxe
+
+
+# create
+docker pull dockerhubaccount001/image_21cxe
+docker volume create volume_21cxe
+docker run \
+	--detach \
+	--name container_21cxe \
+  --volume volume_21cxe:/opt/oracle/oradata \
+  --publish 1521:1521 \
+  --publish 5500:5500 dockerhubaccount001/image_21cxe
+
+
+# reset password
+docker exec container_21cxe ./setPassword.sh @@hack && \
+	docker logs --follow container_21cxe
+
+
+# view system logs
+docker logs --follow container_21cxe
+
+
+# start stop container
+docker stop container_21cxe
+docker start container_21cxe
+
+
+# performance monitor
+docker stats container_21cxe
+
+
+# connection details
+username  : sys as sysdba
+password  : @@hack
+port      : 1521 
+hostname  : localhost
+service   : xepdb1

@@ -1,0 +1,81 @@
+docker login --username=dockerhubaccount001 --password=@@Chutiahutia12
+
+docker image ls
+docker ps --all
+
+docker image build -t nigelpoulton/gsd:swarm2023 ./
+docker rmi <image-id>
+
+multipass find
+
+multipass launch docker --name node-1
+multipass launch docker --name node-2
+multipass launch docker --name node-3
+multipass launch docker --name node-4
+multipass launch docker --name node-5
+
+multipass list
+
+docker node ls
+
+docker swarm init --advertise-addr 192.168.0.14
+
+docker swarm join-token manager
+  -> docker swarm join --token SWMTKN-1-4o1qo6uw1yg05betrv01pacro06psk8lwjowsw7lw5u7xde8o0-e5rive7367s9pzaqiyz8hyvwu 192.168.0.14:2377
+
+docker swarm join-token worker
+  -> docker swarm join --token SWMTKN-1-4o1qo6uw1yg05betrv01pacro06psk8lwjowsw7lw5u7xde8o0-4rsygcmobe9sx04l0045fcbti 192.168.0.14:2377
+
+docker node update --availability drain node5
+docker node update --availability drain node1
+docker node update --availability drain node2
+
+docker service create --name web -p 8080:8080 --replicas 3 nigelpoulton/gsd:web2023
+
+docker service ls
+docker container ls
+docker service ps web
+docker service scale web=10
+
+docker service rm web
+
+docker stack deploy -c compose.yml counter
+docker stack ls
+docker stack services counter
+
+
++----------+
+| Cleaning |
++----------+
+
+  docker container ls
+  docker container rm 7f979bc7a6b9 96543736b330 0a164a08bc5 3998c8287d95 4a11498 883e904 4c871a5 598f4c5 71051c9cb5 42ce171115f1 
+
+  docker image ls
+  docker image rm 7e01a0d0a1dc 01f29b872827
+
++-------------+
+| Build Image |
++-------------+
+
+  docker image build ./ --file ./perverzija_dl.dockerfile --tag dockerhubaccount001/image_perverzija_dl_v7.02
+
+  docker push dockerhubaccount001/image_perverzija_dl_v7
+  docker pull dockerhubaccount001/image_perverzija_dl_v7
+
+  docker run --name container_perverzija_dl_v7 --volume "C:\Users\John Doe\Downloads\op":/home/perverzija-dl/op --interactive --tty dockerhubaccount001/image_perverzija_dl_v7
+  
+  mkdir --parents /home/codybuilder/Downloads/perverzija-dl/op && docker run \
+    --name container_perverzija_dl_v7.02 \
+    --volume /home/codybuilder/Downloads/perverzija-dl/op:/opt/perverzija-dl/op \
+    --interactive --tty dockerhubaccount001/image_perverzija_dl_v7.02
+
+  docker container start --interactive container_perverzija_dl_v7
+
++--------+
+| Others | 
++--------+
+
+  docker stats
+  docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
+  docker exec --interactive --tty container_21c_xe /bin/bash
